@@ -1,0 +1,3113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIUM API Navigator — Integration Checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --nium-teal: #00C2A8;
+    --nium-dark: #0A0F1C;
+    --nium-navy: #0D1B35;
+    --nium-card: #111928;
+    --nium-border: #1E2D4A;
+    --nium-text: #E8EDF5;
+    --nium-muted: #7A8BA8;
+    --nium-teal-dim: rgba(0,194,168,0.12);
+    --nium-teal-glow: rgba(0,194,168,0.25);
+    --yes-color: #00C2A8;
+    --yes-bg: rgba(0,194,168,0.1);
+    --opt-color: #F5A623;
+    --opt-bg: rgba(245,166,35,0.1);
+    --na-color: #4A5568;
+    --na-bg: rgba(74,85,104,0.15);
+    --cond-color: #7B8FF0;
+    --cond-bg: rgba(123,143,240,0.1);
+    --no-color: #E05252;
+    --no-bg: rgba(224,82,82,0.1);
+    --api-color: #56CFE1;
+    --webhook-color: #C084FC;
+    --sidebar-w: 260px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--nium-dark);
+    color: var(--nium-text);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar {
+    width: var(--sidebar-w);
+    min-width: var(--sidebar-w);
+    background: var(--nium-navy);
+    border-right: 1px solid var(--nium-border);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .sidebar-logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--nium-border);
+  }
+
+  .logo-mark {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: var(--nium-teal);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--nium-dark);
+    letter-spacing: -0.5px;
+  }
+
+  .logo-text { font-size: 17px; font-weight: 600; }
+  .logo-sub { font-size: 11px; color: var(--nium-muted); letter-spacing: 0.08em; text-transform: uppercase; }
+
+  .sidebar-nav { flex: 1; padding: 12px 0; }
+
+  .nav-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--nium-muted);
+    padding: 14px 20px 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    cursor: pointer;
+    font-size: 13.5px;
+    color: var(--nium-muted);
+    transition: all 0.2s;
+    border-left: 2px solid transparent;
+    text-decoration: none;
+  }
+
+  .nav-item:hover { color: var(--nium-text); background: var(--nium-teal-dim); }
+  .nav-item.active { color: var(--nium-teal); border-left-color: var(--nium-teal); background: var(--nium-teal-dim); }
+
+  .nav-icon { width: 18px; height: 18px; opacity: 0.8; flex-shrink: 0; }
+
+  /* ─── MAIN ─── */
+  .main { flex: 1; overflow-y: auto; }
+
+  .top-bar {
+    background: var(--nium-navy);
+    border-bottom: 1px solid var(--nium-border);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .breadcrumb { font-size: 13px; color: var(--nium-muted); display: flex; align-items: center; gap: 6px; }
+  .breadcrumb span { color: var(--nium-text); }
+
+  .version-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: var(--nium-teal-dim);
+    border: 1px solid var(--nium-teal-glow);
+    color: var(--nium-teal);
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── SECTIONS ─── */
+  .section { padding: 40px 32px 32px; }
+  .section + .section { border-top: 1px solid var(--nium-border); }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    gap: 16px;
+  }
+
+  .section-title-group {}
+
+  .section-eyebrow {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--nium-teal);
+    margin-bottom: 6px;
+  }
+
+  .section-title { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+  .section-desc { font-size: 14px; color: var(--nium-muted); margin-top: 6px; line-height: 1.6; max-width: 600px; }
+
+  /* ─── LEGEND ─── */
+  .legend-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+
+  .legend-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  .legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+  /* ─── NAVIGATOR TABLE ─── */
+  .nav-table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--nium-border); }
+
+  .nav-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .nav-table thead th {
+    background: var(--nium-navy);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--nium-muted);
+    border-bottom: 1px solid var(--nium-border);
+    white-space: nowrap;
+  }
+
+  .nav-table thead th:first-child { border-radius: 12px 0 0 0; }
+  .nav-table thead th:last-child { border-radius: 0 12px 0 0; }
+
+  .nav-table th.module-col { min-width: 180px; }
+  .nav-table th.usecase-col { min-width: 130px; }
+
+  .nav-table tbody tr:hover td { background: var(--nium-teal-dim); }
+
+  .nav-table tbody td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--nium-border);
+    vertical-align: middle;
+  }
+
+  .nav-table tbody tr:last-child td { border-bottom: none; }
+
+  .module-link {
+    color: var(--nium-teal);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    transition: opacity 0.2s;
+  }
+  .module-link:hover { opacity: 0.75; text-decoration: underline; }
+
+  /* status pills */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .pill-yes { background: var(--yes-bg); color: var(--yes-color); border: 1px solid rgba(0,194,168,0.2); }
+  .pill-optional { background: var(--opt-bg); color: var(--opt-color); border: 1px solid rgba(245,166,35,0.2); }
+  .pill-na { background: var(--na-bg); color: var(--na-color); border: 1px solid rgba(74,85,104,0.2); }
+  .pill-cond { background: var(--cond-bg); color: var(--cond-color); border: 1px solid rgba(123,143,240,0.2); }
+  .pill-no { background: var(--no-bg); color: var(--no-color); border: 1px solid rgba(224,82,82,0.2); }
+
+  /* ─── CLIENT TYPE CARDS ─── */
+  .client-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-bottom: 32px; }
+
+  .client-card {
+    background: var(--nium-card);
+    border: 1px solid var(--nium-border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .client-card:hover { border-color: var(--nium-teal-glow); transform: translateY(-2px); }
+
+  .client-type-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--nium-muted);
+    margin-bottom: 4px;
+  }
+
+  .client-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .client-card .usecase { font-size: 12px; color: var(--nium-teal); margin-bottom: 12px; }
+
+  .client-modules { display: flex; flex-direction: column; gap: 4px; }
+
+  .client-module-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--nium-muted);
+  }
+
+  /* ─── API GROUPS ─── */
+  .api-group { margin-bottom: 28px; }
+
+  .group-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: var(--nium-navy);
+    border: 1px solid var(--nium-border);
+    border-radius: 10px 10px 0 0;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .group-num {
+    width: 24px; height: 24px;
+    background: var(--nium-teal);
+    color: var(--nium-dark);
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .group-num.warn { background: var(--opt-color); }
+  .group-num.depr { background: var(--no-color); }
+
+  .group-title { font-size: 14px; font-weight: 600; flex: 1; }
+
+  .group-toggle {
+    font-size: 12px;
+    color: var(--nium-muted);
+    transition: transform 0.2s;
+  }
+
+  .group-toggle.open { transform: rotate(180deg); }
+
+  .group-body {
+    border: 1px solid var(--nium-border);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    overflow: hidden;
+  }
+
+  .api-row {
+    display: grid;
+    grid-template-columns: 36px 2fr 3fr 110px 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--nium-border);
+    align-items: stretch;
+    transition: background 0.15s;
+  }
+
+  .api-row:last-child { border-bottom: none; }
+  .api-row:hover { background: rgba(255,255,255,0.02); }
+
+  .api-row > div {
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid var(--nium-border);
+    font-size: 13px;
+  }
+
+  .api-row > div:last-child { border-right: none; }
+
+  .api-num { color: var(--nium-muted); font-family: 'DM Mono', monospace; font-size: 12px; justify-content: center; }
+
+  .api-name-cell { flex-direction: column; align-items: flex-start; gap: 3px; }
+
+  .api-link {
+    color: var(--nium-text);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 13.5px;
+    line-height: 1.3;
+    transition: color 0.15s;
+  }
+
+  .api-link:hover { color: var(--nium-teal); }
+
+  .type-tag {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  .type-api { background: rgba(86,207,225,0.12); color: var(--api-color); }
+  .type-webhook { background: rgba(192,132,252,0.12); color: var(--webhook-color); }
+  .type-callback { background: rgba(192,132,252,0.2); color: #D8B4FE; }
+
+  .api-desc { color: var(--nium-muted); font-size: 12.5px; line-height: 1.5; }
+
+  .api-req-cell { justify-content: center; }
+
+  .api-remark { color: var(--nium-muted); font-size: 12px; line-height: 1.5; }
+
+  .remark-link {
+    color: var(--nium-teal);
+    text-decoration: none;
+    font-size: 11.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    margin-top: 2px;
+  }
+
+  .remark-link:hover { text-decoration: underline; }
+
+  /* ─── API ROWS HEADER ─── */
+  .api-rows-header {
+    display: grid;
+    grid-template-columns: 36px 2fr 3fr 110px 1fr;
+    background: rgba(14,24,42,0.8);
+    border-bottom: 1px solid var(--nium-border);
+  }
+
+  .api-rows-header > div {
+    padding: 8px 14px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--nium-muted);
+    border-right: 1px solid var(--nium-border);
+  }
+
+  .api-rows-header > div:last-child { border-right: none; }
+
+  /* ─── SCENARIO TABS ─── */
+  .tab-bar {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 20px;
+    background: var(--nium-navy);
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid var(--nium-border);
+    width: fit-content;
+  }
+
+  .tab-btn {
+    padding: 7px 18px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--nium-muted);
+    transition: all 0.2s;
+    font-family: 'Sora', sans-serif;
+  }
+
+  .tab-btn.active { background: var(--nium-teal); color: var(--nium-dark); font-weight: 600; }
+  .tab-btn:hover:not(.active) { color: var(--nium-text); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ─── SCENARIO CARD ─── */
+  .scenario-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .scenario-card {
+    background: var(--nium-card);
+    border: 1px solid var(--nium-border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .scenario-card.recommended { border-color: var(--nium-teal-glow); }
+
+  .scenario-head {
+    padding: 14px 18px;
+    background: rgba(14,24,42,0.6);
+    border-bottom: 1px solid var(--nium-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .scenario-head h3 { font-size: 14px; font-weight: 600; }
+
+  .recommended-tag {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 9px;
+    border-radius: 20px;
+    background: var(--yes-bg);
+    color: var(--yes-color);
+    border: 1px solid rgba(0,194,168,0.2);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .scenario-body { padding: 14px 18px; }
+
+  .scenario-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 13px;
+  }
+
+  .scenario-row:last-child { border-bottom: none; }
+  .scenario-label { color: var(--nium-muted); }
+  .scenario-value { color: var(--nium-text); font-weight: 500; text-align: right; max-width: 55%; }
+
+  /* ─── SESSION PARAMS TABLE ─── */
+  .params-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--nium-border);
+    margin-top: 12px;
+  }
+
+  .params-table th {
+    background: var(--nium-navy);
+    padding: 9px 14px;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--nium-muted);
+    text-align: left;
+    border-bottom: 1px solid var(--nium-border);
+  }
+
+  .params-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--nium-border);
+    vertical-align: top;
+  }
+
+  .params-table tr:last-child td { border-bottom: none; }
+  .params-table tr:hover td { background: var(--nium-teal-dim); }
+
+  .param-name { font-family: 'DM Mono', monospace; color: #A5D6F5; font-size: 12px; }
+  .param-type { font-family: 'DM Mono', monospace; color: var(--cond-color); font-size: 11px; }
+  .param-desc { color: var(--nium-muted); line-height: 1.5; }
+  .param-note { color: var(--nium-text); font-size: 12px; }
+
+  /* ─── INFO BOX ─── */
+  .info-box {
+    background: var(--nium-teal-dim);
+    border: 1px solid var(--nium-teal-glow);
+    border-left: 3px solid var(--nium-teal);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    margin: 12px 0 18px;
+    font-size: 13px;
+    color: var(--nium-text);
+    line-height: 1.6;
+  }
+
+  .warn-box {
+    background: rgba(245,166,35,0.08);
+    border: 1px solid rgba(245,166,35,0.2);
+    border-left: 3px solid var(--opt-color);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    margin: 12px 0 18px;
+    font-size: 13px;
+    color: var(--nium-text);
+    line-height: 1.6;
+  }
+
+  /* ─── PAYOUT FLOW TABLE ─── */
+  .flow-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--nium-muted);
+    padding: 14px 0 6px;
+    margin-top: 8px;
+    border-top: 1px solid var(--nium-border);
+    display: block;
+  }
+
+  .flow-label:first-child { border-top: none; margin-top: 0; }
+
+  /* ─── DEPRECATED SECTION ─── */
+  .deprecated-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11.5px;
+    color: var(--no-color);
+    font-weight: 500;
+  }
+
+  /* ─── FOOTER ─── */
+  .doc-footer {
+    padding: 28px 32px;
+    border-top: 1px solid var(--nium-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--nium-muted);
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--nium-border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--nium-muted); }
+
+  /* ─── ANCHOR SCROLL OFFSET ─── */
+  [id] { scroll-margin-top: 56px; }
+
+  /* ─── URL CODE ─── */
+  .url-code {
+    font-family: 'DM Mono', monospace;
+    font-size: 11.5px;
+    color: #A5D6F5;
+    background: rgba(165,214,245,0.08);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .scenario-compare { grid-template-columns: 1fr; }
+    .api-row { grid-template-columns: 1fr; }
+    .api-rows-header { display: none; }
+  }
+
+/* ===== ENHANCED UI/UX LAYER ===== */
+body{
+  background:
+    radial-gradient(circle at top left, rgba(0,194,168,0.16), transparent 28%),
+    radial-gradient(circle at top right, rgba(123,143,240,0.12), transparent 22%),
+    linear-gradient(135deg,#050814 0%,#0A0F1C 45%,#091223 100%);
+  overflow-x:hidden;
+}
+
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none;
+  z-index:-1;
+}
+
+.sidebar{
+  backdrop-filter: blur(16px);
+  background: rgba(13,27,53,0.82);
+  box-shadow: 10px 0 40px rgba(0,0,0,0.35);
+}
+
+.sidebar-logo{
+  position:sticky;
+  top:0;
+  background: rgba(13,27,53,0.92);
+  backdrop-filter: blur(12px);
+  z-index:5;
+}
+
+.logo-icon{
+  box-shadow: 0 0 22px rgba(0,194,168,0.55);
+  animation:pulseGlow 3s infinite ease-in-out;
+}
+
+@keyframes pulseGlow{
+  0%,100%{transform:scale(1);box-shadow:0 0 18px rgba(0,194,168,0.45);}
+  50%{transform:scale(1.06);box-shadow:0 0 28px rgba(0,194,168,0.75);}
+}
+
+.nav-item{
+  border-radius:0 14px 14px 0;
+  margin-right:10px;
+  position:relative;
+  overflow:hidden;
+}
+
+.nav-item::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg, rgba(0,194,168,0.18), transparent);
+  opacity:0;
+  transition:opacity .3s ease;
+}
+
+.nav-item:hover::before,
+.nav-item.active::before{
+  opacity:1;
+}
+
+.top-bar{
+  background: rgba(13,27,53,0.74);
+  backdrop-filter: blur(18px);
+  box-shadow:0 10px 30px rgba(0,0,0,0.22);
+}
+
+.section{
+  position:relative;
+}
+
+.section::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:32px;
+  width:100px;
+  height:2px;
+  background:linear-gradient(90deg,var(--nium-teal),transparent);
+}
+
+.section-title{
+  font-size:30px;
+  background: linear-gradient(90deg,#ffffff,#7eead8);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.section-desc{
+  font-size:15px;
+}
+
+.legend-badge,
+.pill,
+.type-tag,
+.version-badge{
+  backdrop-filter: blur(12px);
+}
+
+.client-card,
+.scenario-card,
+.nav-table-wrap,
+.group-body,
+.params-table{
+  background: rgba(17,25,40,0.72);
+  backdrop-filter: blur(16px);
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.client-card:hover,
+.scenario-card:hover{
+  transform: translateY(-6px) scale(1.01);
+  box-shadow:
+    0 18px 40px rgba(0,0,0,0.35),
+    0 0 0 1px rgba(0,194,168,0.18);
+}
+
+.nav-table tbody tr,
+.api-row,
+.client-card,
+.scenario-card,
+.api-group{
+  transition:all .28s ease;
+}
+
+.nav-table tbody tr:hover{
+  transform:scale(1.002);
+}
+
+.api-group{
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,0.04);
+  margin-bottom:34px;
+}
+
+.group-header{
+  background:
+    linear-gradient(90deg, rgba(0,194,168,0.12), transparent),
+    var(--nium-navy);
+}
+
+.group-header:hover{
+  background:
+    linear-gradient(90deg, rgba(0,194,168,0.22), transparent),
+    var(--nium-navy);
+}
+
+.group-title{
+  letter-spacing:0.01em;
+}
+
+.api-row:hover{
+  background: rgba(0,194,168,0.05);
+  transform:translateX(4px);
+}
+
+.api-link{
+  position:relative;
+}
+
+.api-link::after{
+  content:'';
+  position:absolute;
+  left:0;
+  bottom:-2px;
+  width:0;
+  height:1px;
+  background:var(--nium-teal);
+  transition:width .25s ease;
+}
+
+.api-link:hover::after{
+  width:100%;
+}
+
+.tab-bar{
+  box-shadow:0 8px 24px rgba(0,0,0,0.22);
+}
+
+.tab-btn.active{
+  box-shadow:0 6px 18px rgba(0,194,168,0.4);
+}
+
+.info-box,
+.warn-box{
+  backdrop-filter: blur(10px);
+}
+
+.doc-footer{
+  background:rgba(10,15,28,0.6);
+  backdrop-filter: blur(14px);
+}
+
+.fade-in-section{
+  opacity:0;
+  transform:translateY(30px);
+  transition:all .7s cubic-bezier(.2,.65,.3,1);
+}
+
+.fade-in-section.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.glass-highlight{
+  position:relative;
+  overflow:hidden;
+}
+
+.glass-highlight::after{
+  content:'';
+  position:absolute;
+  top:-120%;
+  left:-30%;
+  width:40%;
+  height:300%;
+  background:linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent);
+  transform:rotate(25deg);
+  animation:shine 8s linear infinite;
+}
+
+@keyframes shine{
+  0%{left:-40%;}
+  100%{left:140%;}
+}
+
+@media (max-width:900px){
+  .section-title{
+    font-size:24px;
+  }
+
+  .top-bar{
+    padding:14px 18px;
+  }
+
+  .section{
+    padding:30px 18px;
+  }
+}
+
+</style>
+
+<style id="deck-theme-upgrade">
+:root{
+  --light-bg:#f4f8fc;
+  --light-surface:#ffffff;
+  --light-card:#ffffff;
+  --light-border:#d8e2f0;
+  --light-text:#122033;
+  --light-muted:#5d6b82;
+}
+
+body.light-theme{
+  --nium-dark: var(--light-bg);
+  --nium-navy: #eef4fb;
+  --nium-card: var(--light-card);
+  --nium-border: var(--light-border);
+  --nium-text: var(--light-text);
+  --nium-muted: var(--light-muted);
+  background:
+    radial-gradient(circle at top left, rgba(0,194,168,0.12), transparent 30%),
+    linear-gradient(180deg,#f9fbfe 0%, #edf3fb 100%);
+}
+
+body.light-theme::before{
+  background-image:
+    linear-gradient(rgba(18,32,51,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(18,32,51,0.03) 1px, transparent 1px);
+}
+
+body.light-theme .sidebar,
+body.light-theme .top-bar{
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(20px);
+}
+
+body.light-theme .section-title{
+  background: linear-gradient(90deg,#122033,#00a896);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+body.light-theme .nav-table-wrap,
+body.light-theme .client-card,
+body.light-theme .scenario-card,
+body.light-theme .group-body,
+body.light-theme .params-table{
+  background: rgba(255,255,255,0.86);
+  box-shadow:
+    0 10px 28px rgba(31,45,61,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.7);
+}
+
+body.light-theme .group-header{
+  background:
+    linear-gradient(90deg, rgba(0,194,168,0.08), transparent),
+    rgba(255,255,255,0.88);
+}
+
+body.light-theme .api-row:hover,
+body.light-theme .nav-table tbody tr:hover td{
+  background: rgba(0,194,168,0.08);
+}
+
+.theme-toggle{
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  z-index:9999;
+  border:none;
+  border-radius:999px;
+  padding:14px 18px;
+  cursor:pointer;
+  font-family:'Sora',sans-serif;
+  font-weight:600;
+  font-size:13px;
+  background:linear-gradient(135deg,#00C2A8,#7B8FF0);
+  color:white;
+  box-shadow:0 10px 28px rgba(0,0,0,0.25);
+  transition:all .3s ease;
+}
+
+.theme-toggle:hover{
+  transform:translateY(-3px) scale(1.02);
+}
+
+.deck-hero{
+  margin: 10px 32px 0;
+  border-radius:28px;
+  overflow:hidden;
+  position:relative;
+  padding:42px;
+  background:
+    radial-gradient(circle at top right, rgba(255,255,255,0.18), transparent 30%),
+    linear-gradient(135deg,#00C2A8 0%, #0D1B35 50%, #7B8FF0 100%);
+  box-shadow:0 20px 60px rgba(0,0,0,0.22);
+}
+
+.deck-hero::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.08) 45%, transparent 60%);
+  animation:deckFlow 8s linear infinite;
+}
+
+@keyframes deckFlow{
+  0%{transform:translateX(-100%);}
+  100%{transform:translateX(100%);}
+}
+
+.hero-content{
+  position:relative;
+  z-index:2;
+  max-width:720px;
+}
+
+.hero-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.16);
+  padding:8px 14px;
+  border-radius:999px;
+  color:white;
+  font-size:12px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-bottom:18px;
+}
+
+.hero-title{
+  font-size:48px;
+  line-height:1.05;
+  color:white;
+  font-weight:700;
+  letter-spacing:-0.04em;
+  margin-bottom:14px;
+}
+
+.hero-desc{
+  color:rgba(255,255,255,0.86);
+  font-size:16px;
+  line-height:1.7;
+  max-width:640px;
+}
+
+.hero-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:14px;
+  margin-top:28px;
+}
+
+.hero-stat{
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:18px;
+  padding:16px;
+  backdrop-filter:blur(10px);
+}
+
+.hero-stat strong{
+  display:block;
+  color:white;
+  font-size:24px;
+  margin-bottom:6px;
+}
+
+.hero-stat span{
+  color:rgba(255,255,255,0.72);
+  font-size:12px;
+}
+
+@media(max-width:900px){
+  .deck-hero{
+    margin:0 18px;
+    padding:28px 22px;
+  }
+
+  .hero-title{
+    font-size:34px;
+  }
+
+  .theme-toggle{
+    right:14px;
+    bottom:14px;
+  }
+}
+</style>
+
+
+<style id="executive-deck-theme">
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  background:
+    radial-gradient(circle at top left, rgba(0,194,168,0.14), transparent 26%),
+    radial-gradient(circle at bottom right, rgba(123,143,240,0.12), transparent 22%),
+    linear-gradient(180deg,#08101d 0%, #0d1626 100%);
+}
+
+body.light-theme{
+  background:
+    radial-gradient(circle at top left, rgba(0,194,168,0.10), transparent 30%),
+    linear-gradient(180deg,#f7fafe 0%, #eef4fb 100%);
+}
+
+.main{
+  padding-bottom:60px;
+}
+
+.executive-deck{
+  position:relative;
+  margin:20px 28px 10px;
+  border-radius:34px;
+  overflow:hidden;
+  min-height:420px;
+  background:
+    linear-gradient(135deg,#07111d 0%, #10223d 40%, #0b3954 100%);
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    0 40px 80px rgba(0,0,0,0.28),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+body.light-theme .executive-deck{
+  background:
+    linear-gradient(135deg,#ffffff 0%, #edf4fb 55%, #dfeef7 100%);
+  border:1px solid rgba(15,23,42,0.08);
+}
+
+.hero-overlay-grid{
+  position:absolute;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size:40px 40px;
+  mask-image:linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0.2));
+}
+
+body.light-theme .hero-overlay-grid{
+  background-image:
+    linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);
+}
+
+.hero-layout{
+  position:relative;
+  z-index:2;
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:20px;
+  align-items:center;
+  min-height:420px;
+  padding:48px;
+}
+
+.hero-chip{
+  display:inline-flex;
+  align-items:center;
+  padding:10px 16px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.08);
+  color:#d8e5f5;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-bottom:24px;
+  backdrop-filter:blur(12px);
+}
+
+body.light-theme .hero-chip{
+  color:#17324d;
+  background:rgba(255,255,255,0.72);
+  border:1px solid rgba(15,23,42,0.06);
+}
+
+.hero-title{
+  font-size:72px;
+  line-height:.95;
+  letter-spacing:-0.06em;
+  color:white;
+  margin-bottom:24px;
+  font-weight:800;
+}
+
+.hero-title span{
+  background:linear-gradient(90deg,#00C2A8,#7B8FF0);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+body.light-theme .hero-title{
+  color:#07111d;
+}
+
+.hero-desc{
+  max-width:700px;
+  color:rgba(255,255,255,0.76);
+  font-size:17px;
+  line-height:1.8;
+}
+
+body.light-theme .hero-desc{
+  color:#4b6079;
+}
+
+.hero-actions{
+  display:flex;
+  gap:18px;
+  margin-top:34px;
+  flex-wrap:wrap;
+}
+
+.hero-mini-card{
+  width:240px;
+  padding:20px;
+  border-radius:24px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.08);
+  backdrop-filter:blur(16px);
+  box-shadow:0 10px 30px rgba(0,0,0,0.18);
+}
+
+.hero-mini-card strong{
+  display:block;
+  color:white;
+  font-size:18px;
+  margin-bottom:8px;
+}
+
+.hero-mini-card span{
+  color:rgba(255,255,255,0.7);
+  font-size:13px;
+  line-height:1.6;
+}
+
+body.light-theme .hero-mini-card{
+  background:rgba(255,255,255,0.82);
+  border:1px solid rgba(15,23,42,0.06);
+}
+
+body.light-theme .hero-mini-card strong{
+  color:#07111d;
+}
+
+body.light-theme .hero-mini-card span{
+  color:#54657d;
+}
+
+.hero-right{
+  position:relative;
+  height:100%;
+  min-height:300px;
+}
+
+.floating-panel{
+  position:absolute;
+  width:220px;
+  border-radius:28px;
+  padding:26px;
+  backdrop-filter:blur(18px);
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:0 24px 40px rgba(0,0,0,0.24);
+  animation:floatCard 7s ease-in-out infinite;
+}
+
+body.light-theme .floating-panel{
+  background:rgba(255,255,255,0.82);
+  border:1px solid rgba(15,23,42,0.06);
+}
+
+.panel-1{top:20px;left:40px;}
+.panel-2{top:140px;right:10px;animation-delay:1.5s;}
+.panel-3{bottom:0;left:90px;animation-delay:3s;}
+
+.panel-label{
+  color:rgba(255,255,255,0.6);
+  font-size:12px;
+  margin-bottom:10px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.panel-value{
+  color:white;
+  font-size:30px;
+  font-weight:700;
+}
+
+body.light-theme .panel-label{
+  color:#607089;
+}
+
+body.light-theme .panel-value{
+  color:#07111d;
+}
+
+@keyframes floatCard{
+  0%,100%{transform:translateY(0px);}
+  50%{transform:translateY(-12px);}
+}
+
+.nav-table-wrap,
+.api-group,
+.client-card,
+.scenario-card,
+.params-table{
+  border-radius:24px !important;
+  overflow:hidden;
+  box-shadow:
+    0 18px 40px rgba(0,0,0,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.api-group{
+  border:none;
+}
+
+.group-header{
+  min-height:68px;
+}
+
+.api-row{
+  transition:all .25s ease;
+}
+
+.api-row:hover{
+  transform:translateX(8px);
+}
+
+.section{
+  max-width:1600px;
+  margin:auto;
+}
+
+.section-title{
+  font-size:42px !important;
+}
+
+.theme-toggle{
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  padding:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  background:linear-gradient(135deg,#00C2A8,#7B8FF0);
+  border:none;
+}
+
+@media(max-width:1100px){
+
+  .hero-layout{
+    grid-template-columns:1fr;
+    padding:34px 26px;
+  }
+
+  .hero-title{
+    font-size:54px;
+  }
+
+  .hero-right{
+    min-height:260px;
+  }
+
+  .floating-panel{
+    width:180px;
+  }
+}
+
+@media(max-width:768px){
+
+  .executive-deck{
+    margin:12px;
+    border-radius:24px;
+  }
+
+  .hero-title{
+    font-size:42px;
+  }
+
+  .hero-actions{
+    flex-direction:column;
+  }
+
+  .hero-mini-card{
+    width:100%;
+  }
+
+  .floating-panel{
+    transform:scale(.85);
+  }
+
+  .section-title{
+    font-size:32px !important;
+  }
+}
+
+</style>
+
+</head>
+<body>
+
+<!-- ─── SIDEBAR ─── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">N</div>
+      <div class="logo-text">NIUM</div>
+    </div>
+    <div class="logo-sub">API Navigator v0.2</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-label">Overview</div>
+    <a class="nav-item active" href="#main">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Client Type Navigator
+    </a>
+
+    <div class="nav-label">Modules</div>
+    <a class="nav-item" href="#onboarding">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Customer Onboarding
+    </a>
+    <a class="nav-item" href="#payin">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Payin (Funding)
+    </a>
+    <a class="nav-item" href="#payout">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      Payout
+    </a>
+    <a class="nav-item" href="#cards">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Card Management
+    </a>
+    <a class="nav-item" href="#fx">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Foreign Exchange
+    </a>
+    <a class="nav-item" href="#verify">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      NIUM Verify
+    </a>
+
+    <div class="nav-label">Links</div>
+    <a class="nav-item" href="https://docs.nium.com" target="_blank">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      NIUM Docs
+    </a>
+    <a class="nav-item" href="https://www.nium.com/legal/end-customer-terms" target="_blank">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      End Customer T&amp;C
+    </a>
+  </nav>
+</aside>
+
+<!-- ─── MAIN CONTENT ─── -->
+<main class="main">
+
+<section class="deck-hero executive-deck">
+  <div class="hero-overlay-grid"></div>
+
+  <div class="hero-layout">
+    <div class="hero-left">
+      <div class="hero-chip">Enterprise Integration Reference</div>
+
+      <h1 class="hero-title">
+        NIUM API <span>Navigator</span>
+      </h1>
+
+      <p class="hero-desc">
+        Modern enterprise-grade integration architecture deck designed for solution engineers,
+        fintech onboarding teams, implementation managers, and API integration stakeholders.
+      </p>
+
+      <div class="hero-actions">
+        <div class="hero-mini-card">
+          <strong>V5 APIs</strong>
+          <span>Advanced onboarding & KYB orchestration</span>
+        </div>
+
+        <div class="hero-mini-card">
+          <strong>Interactive</strong>
+          <span>Presentation-ready navigation experience</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="floating-panel panel-1">
+        <div class="panel-label">Modules</div>
+        <div class="panel-value">12+</div>
+      </div>
+
+      <div class="floating-panel panel-2">
+        <div class="panel-label">Integration</div>
+        <div class="panel-value">Enterprise</div>
+      </div>
+
+      <div class="floating-panel panel-3">
+        <div class="panel-label">Status</div>
+        <div class="panel-value">Live Ready</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  <div class="top-bar">
+    <div class="breadcrumb">NIUM <span>›</span> <span>API Integration Checklist</span></div>
+    <span class="version-badge">v0.2 DRAFT</span>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 1 – MAIN NAVIGATOR
+  ═══════════════════════════════════════════════ -->
+  <section class="section" id="main">
+    <div class="section-header">
+      <div class="section-title-group">
+        <div class="section-eyebrow">Start Here</div>
+        <h1 class="section-title">Client Type Navigator</h1>
+        <p class="section-desc">Identify which API modules are required for your integration. Select your client type and use case below to see mandatory, optional, and N/A modules at a glance.</p>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend-row">
+      <span class="legend-badge pill-yes"><span class="legend-dot" style="background:var(--yes-color)"></span> Mandatory</span>
+      <span class="legend-badge pill-optional"><span class="legend-dot" style="background:var(--opt-color)"></span> Optional</span>
+      <span class="legend-badge pill-na"><span class="legend-dot" style="background:var(--na-color)"></span> Not Applicable</span>
+      <span class="legend-badge" style="background:rgba(123,143,240,0.1);color:var(--cond-color);border:1px solid rgba(123,143,240,0.2)"><span class="legend-dot" style="background:var(--cond-color)"></span> Conditional — read remarks</span>
+      <span class="legend-badge pill-no"><span class="legend-dot" style="background:var(--no-color)"></span> Deprecated — do not use</span>
+    </div>
+
+    <!-- Navigator Table -->
+    <div class="nav-table-wrap">
+      <table class="nav-table">
+        <thead>
+          <tr>
+            <th class="module-col">API Module</th>
+            <th class="usecase-col" colspan="2" style="text-align:center;border-left:1px solid var(--nium-border)">Bank / FI Client</th>
+            <th class="usecase-col" style="text-align:center;border-left:1px solid var(--nium-border)">Non-Bank FI</th>
+            <th class="usecase-col" style="text-align:center;border-left:1px solid var(--nium-border)">NonFI Direct (Enterprise)</th>
+            <th class="usecase-col" colspan="3" style="text-align:center;border-left:1px solid var(--nium-border)">Platform Client</th>
+          </tr>
+          <tr>
+            <th></th>
+            <th style="text-align:center;border-left:1px solid var(--nium-border)">Payout</th>
+            <th style="text-align:center">Collection</th>
+            <th style="text-align:center;border-left:1px solid var(--nium-border)">Payout</th>
+            <th style="text-align:center;border-left:1px solid var(--nium-border)">Payout</th>
+            <th style="text-align:center;border-left:1px solid var(--nium-border)">Payout</th>
+            <th style="text-align:center">Spend Mgmt</th>
+            <th style="text-align:center">Full Stack</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Helper macro rows -->
+          <tr>
+            <td><a href="#main" class="module-link">Clients</a></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-optional">Optional</span></td>
+            <td style="text-align:center"><span class="pill pill-optional">Optional</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-optional">Optional</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-optional">Optional</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-optional">Optional</span></td>
+            <td style="text-align:center"><span class="pill pill-optional">Optional</span></td>
+            <td style="text-align:center"><span class="pill pill-optional">Optional</span></td>
+          </tr>
+          <tr>
+            <td><a href="#onboarding" class="module-link">Customers</a></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+          </tr>
+          <tr>
+            <td><a href="#onboarding" class="module-link">Customer Account – Corporate</a></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center"><span class="pill pill-yes" title="Read notes">YES **</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+          </tr>
+          <tr>
+            <td><a href="#onboarding" class="module-link">Customer Account – Individual</a></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center"><span class="pill pill-yes" title="Read notes">YES **</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+          </tr>
+          <tr>
+            <td><a href="#onboarding" class="module-link">Customer T&amp;C</a></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+          </tr>
+          <tr>
+            <td><a href="#onboarding" class="module-link">Customer Management</a></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+          </tr>
+          <tr>
+            <td><a href="#onboarding" class="module-link">Wallet Management</a></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+          </tr>
+          <tr>
+            <td><a href="#payin" class="module-link">Payin (Funding) – VA</a></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+          </tr>
+          <tr>
+            <td><a href="#payout" class="module-link">Payout</a></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+          </tr>
+          <tr>
+            <td><a href="#cards" class="module-link">Cards</a></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+          </tr>
+          <tr>
+            <td><a href="#fx" class="module-link">Foreign Exchange</a></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-optional">Optional</span></td>
+            <td style="text-align:center"><span class="pill pill-optional">Optional</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-optional">Optional</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-optional">Optional</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-optional">Optional</span></td>
+            <td style="text-align:center"><span class="pill pill-optional">Optional</span></td>
+            <td style="text-align:center"><span class="pill pill-optional">Optional</span></td>
+          </tr>
+          <tr>
+            <td><a href="#verify" class="module-link">Verify</a></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-optional">Optional</span></td>
+            <td style="text-align:center"><span class="pill pill-optional">Optional</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-optional">Optional</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-optional">Optional</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-optional">Optional</span></td>
+            <td style="text-align:center"><span class="pill pill-na">N/A</span></td>
+            <td style="text-align:center"><span class="pill pill-optional">Optional</span></td>
+          </tr>
+          <tr>
+            <td><a href="#onboarding" class="module-link">Webhook</a></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center;border-left:1px solid var(--nium-border)"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+            <td style="text-align:center"><span class="pill pill-yes">YES</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-box" style="margin-top:14px">** YES** — Mandatory but read the associated notes/remarks in the module section before implementing.</div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 2 – CUSTOMER ONBOARDING
+  ═══════════════════════════════════════════════ -->
+  <section class="section" id="onboarding">
+    <div class="section-header">
+      <div class="section-title-group">
+        <div class="section-eyebrow">Module</div>
+        <h2 class="section-title">Customer Onboarding V5</h2>
+        <p class="section-desc">NIUM provides two integration paths for onboarding customers. The V5 API approach gives you full UX control, while the Pre-built Form offers faster, low-effort setup.</p>
+      </div>
+    </div>
+
+    <!-- Integration Comparison -->
+    <h3 style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--nium-muted);letter-spacing:0.05em;text-transform:uppercase;">1.1 — Integration Options at a Glance</h3>
+    <div class="scenario-compare">
+      <div class="scenario-card recommended">
+        <div class="scenario-head">
+          <h3>Scenario 1: V5 API (API Approach)</h3>
+          <span class="recommended-tag">Recommended</span>
+        </div>
+        <div class="scenario-body">
+          <div class="scenario-row"><span class="scenario-label">Integration</span><span class="scenario-value">API-based</span></div>
+          <div class="scenario-row"><span class="scenario-label">Engineering Effort</span><span class="scenario-value">Higher — full control over UX and flow</span></div>
+          <div class="scenario-row"><span class="scenario-label">RFI Testing</span><span class="scenario-value">Not available in sandbox — use pre-built form for RFI testing</span></div>
+          <div class="scenario-row"><span class="scenario-label">Best For</span><span class="scenario-value">Tailored onboarding; high-volume clients</span></div>
+        </div>
+      </div>
+      <div class="scenario-card">
+        <div class="scenario-head">
+          <h3>Scenario 2: NIUM Pre-built Form</h3>
+          <span style="font-size:10px;padding:2px 9px;border-radius:20px;background:rgba(123,143,240,0.1);color:var(--cond-color);border:1px solid rgba(123,143,240,0.2);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Alternative</span>
+        </div>
+        <div class="scenario-body">
+          <div class="scenario-row"><span class="scenario-label">Integration</span><span class="scenario-value">Pre-built hosted form by NIUM</span></div>
+          <div class="scenario-row"><span class="scenario-label">Engineering Effort</span><span class="scenario-value">Lower — minimal engineering needed</span></div>
+          <div class="scenario-row"><span class="scenario-label">RFI Testing</span><span class="scenario-value">Supported in sandbox</span></div>
+          <div class="scenario-row"><span class="scenario-label">Best For</span><span class="scenario-value">Smaller volumes; faster setup</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario Tabs -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('v5','onboard-tabs')">Scenario 1 — V5 API</button>
+      <button class="tab-btn" onclick="switchTab('prebuilt','onboard-tabs')">Scenario 2 — Pre-built Form</button>
+    </div>
+
+    <div id="onboard-tabs">
+
+      <!-- V5 API Tab -->
+      <div class="tab-content active" id="tab-v5">
+
+        <!-- Group 1: eKYB Onboarding -->
+        <div class="api-group">
+          <div class="group-header" onclick="toggleGroup(this)">
+            <span class="group-num">1</span>
+            <span class="group-title">eKYB — Corporate Customer Onboarding</span>
+            <span class="group-toggle open">▼</span>
+          </div>
+          <div class="group-body">
+            <div class="api-rows-header">
+              <div>#</div><div>API / Webhook</div><div>Description</div><div>Required</div><div>Notes</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">1</div>
+              <div class="api-name-cell">
+                <a class="api-link" href="https://docs.nium.com/api" target="_blank">Public Corporate Details using Business ID</a>
+                <span class="type-tag type-api">API</span>
+              </div>
+              <div class="api-desc">Fetch publicly available corporate details using a Business ID.</div>
+              <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
+              <div class="api-remark">Read the description before implementing.</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">2</div>
+              <div class="api-name-cell">
+                <a class="api-link" href="https://docs.nium.com/api" target="_blank">Exhaustive Corporate Details using Business ID</a>
+                <span class="type-tag type-api">API</span>
+              </div>
+              <div class="api-desc">Fetch exhaustive corporate details available for SG and EU/UK regions.</div>
+              <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
+              <div class="api-remark">Read the description before implementing.</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">3</div>
+              <div class="api-name-cell">
+                <a class="api-link" href="https://docs.nium.com/api#tag/customer-onboarding-v5/POST/api/v5/client/{clientHashId}/customers" target="_blank">Create Customer v5</a>
+                <span class="type-tag type-api">API</span>
+              </div>
+              <div class="api-desc">Onboard a corporate customer into NIUM. This is the primary onboarding call.</div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark">Refer to the onboarding eKYB flow. <a class="remark-link" href="https://docs.nium.com/api#tag/customer-onboarding-v5/POST/api/v5/client/{clientHashId}/customers" target="_blank">↗ Docs</a></div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">4</div>
+              <div class="api-name-cell">
+                <a class="api-link" href="https://docs.nium.com/api" target="_blank">Update Customer v5</a>
+                <span class="type-tag type-api">API</span>
+              </div>
+              <div class="api-desc">Upload additional documents when the initial set exceeds 10 MB.</div>
+              <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+              <div class="api-remark">Only needed when documents exceed size limit.</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">5</div>
+              <div class="api-name-cell">
+                <a class="api-link" href="https://docs.nium.com/api" target="_blank">Submit KYC for Customer</a>
+                <span class="type-tag type-api">API</span>
+              </div>
+              <div class="api-desc">Submit KYC for a customer entity after documents are uploaded.</div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Group 2: RFI -->
+        <div class="api-group">
+          <div class="group-header" onclick="toggleGroup(this)">
+            <span class="group-num">2</span>
+            <span class="group-title">Customer Corporate — RFI (Request For Information) Flow</span>
+            <span class="group-toggle open">▼</span>
+          </div>
+          <div class="group-body">
+            <div class="api-rows-header">
+              <div>#</div><div>API / Webhook</div><div>Description</div><div>Required</div><div>Notes</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">6</div>
+              <div class="api-name-cell">
+                <a class="api-link" href="https://docs.nium.com/docs/reference/client-kyb-status" target="_blank">Client KYB Status Webhook</a>
+                <span class="type-tag type-webhook">Webhook</span>
+              </div>
+              <div class="api-desc">Webhook fires when <code style="font-family:'DM Mono',monospace;font-size:11px;color:var(--cond-color)">complianceStatus = RFI_REQUESTED</code>, signalling that additional information is required.</div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark"><a class="remark-link" href="https://docs.nium.com/docs/reference/client-kyb-status" target="_blank">↗ Webhook Ref</a></div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">7</div>
+              <div class="api-name-cell">
+                <a class="api-link" href="https://docs.nium.com/apis/reference/fetchcorporatecustomerrfidetails" target="_blank">Fetch Corporate Customer RFI Details</a>
+                <span class="type-tag type-api">API</span>
+              </div>
+              <div class="api-desc">Retrieve the specific information NIUM compliance has requested.</div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark">RFI use case — Corporate customer.</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">8</div>
+              <div class="api-name-cell">
+                <a class="api-link" href="https://docs.nium.com/apis/reference/respondtorfiforcorporatecustomer" target="_blank">Respond to RFI for Corporate Customer</a>
+                <span class="type-tag type-api">API</span>
+              </div>
+              <div class="api-desc">Submit the response with requested information to resolve the corporate RFI.</div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark">RFI use case — Corporate customer.</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">9</div>
+              <div class="api-name-cell">
+                <a class="api-link" href="https://docs.nium.com/apis/reference/regeneratekycurl" target="_blank">Regenerate KYC URL</a>
+                <span class="type-tag type-api">API</span>
+              </div>
+              <div class="api-desc">Regenerate the applicant's eKYC URL for SG and EU/UK regions.</div>
+              <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
+              <div class="api-remark">Read the description carefully — region specific.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Group 3: T&C -->
+        <div class="api-group">
+          <div class="group-header" onclick="toggleGroup(this)">
+            <span class="group-num">3</span>
+            <span class="group-title">Customer Terms &amp; Conditions</span>
+            <span class="group-toggle open">▼</span>
+          </div>
+          <div class="group-body">
+            <div class="api-rows-header">
+              <div>#</div><div>API / Webhook</div><div>Description</div><div>Required</div><div>Notes</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">1</div>
+              <div class="api-name-cell">
+                <a class="api-link" href="https://docs.nium.com/apis/reference/termsandconditions" target="_blank">Terms and Conditions</a>
+                <span class="type-tag type-api">API</span>
+              </div>
+              <div class="api-desc">Fetch NIUM's Terms &amp; Conditions to display to the customer.</div>
+              <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
+              <div class="api-remark">Show customers NIUM T&amp;C via this API, or copy from <a class="remark-link" href="https://www.nium.com/legal/end-customer-terms" target="_blank">NIUM Global T&amp;C ↗</a></div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">2</div>
+              <div class="api-name-cell">
+                <a class="api-link" href="https://docs.nium.com/apis/reference/accepttermsandconditions" target="_blank">Accept Terms and Conditions</a>
+                <span class="type-tag type-api">API</span>
+              </div>
+              <div class="api-desc">Record the customer's acceptance of NIUM's T&amp;C.</div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark">Must collect T&amp;C acceptance. Use: <span class="url-code">TnC Name: NIUMGLOBALTNC</span> &amp; <span class="url-code">versionId: 1.0</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Group 4: Customer Management -->
+        <div class="api-group">
+          <div class="group-header" onclick="toggleGroup(this)">
+            <span class="group-num">4</span>
+            <span class="group-title">Customer Management</span>
+            <span class="group-toggle open">▼</span>
+          </div>
+          <div class="group-body">
+            <div class="api-rows-header">
+              <div>#</div><div>API / Webhook</div><div>Description</div><div>Required</div><div>Notes</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">1</div>
+              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Customer List V5</a><span class="type-tag type-api">API</span></div>
+              <div class="api-desc">Get the list of all customers onboarded to NIUM.</div>
+              <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+              <div class="api-remark">Use as needed by your use case.</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">2</div>
+              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Customer Details V5</a><span class="type-tag type-api">API</span></div>
+              <div class="api-desc">Fetch details of a specific customer by <span class="url-code">customerHashId</span>.</div>
+              <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+              <div class="api-remark">Use as needed.</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">3</div>
+              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/blockunblockcustomer" target="_blank">Block/Unblock Customer</a><span class="type-tag type-api">API</span></div>
+              <div class="api-desc">Temporarily suspend or unsuspend a customer account.</div>
+              <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+              <div class="api-remark">Use to close Customer account.</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">4</div>
+              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/managecustomertags" target="_blank">Manage Customer Tags</a><span class="type-tag type-api">API</span></div>
+              <div class="api-desc">Manage tags associated with a customer.</div>
+              <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+              <div class="api-remark"></div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">5</div>
+              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/accountstatement" target="_blank">Account Statement</a><span class="type-tag type-api">API</span></div>
+              <div class="api-desc">Fetch NIUM account statement as a PDF — at customer level.</div>
+              <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+              <div class="api-remark"></div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">6</div>
+              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/updatecorporatecustomerusingpost" target="_blank">Update Corporate Customer</a><span class="type-tag type-api">API</span></div>
+              <div class="api-desc">Update corporate KYB data (business details, stakeholders, applicant details).</div>
+              <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+              <div class="api-remark">Use when business or stakeholder info changes for an existing customer.</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">7</div>
+              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/customerupdate" target="_blank">Customer Update</a><span class="type-tag type-api">API</span></div>
+              <div class="api-desc">Update non-KYC employee information.</div>
+              <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+              <div class="api-remark"></div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">8</div>
+              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/walletstatement" target="_blank">Account Statement for the Specified Wallet</a><span class="type-tag type-api">API</span></div>
+              <div class="api-desc">Fetch NIUM account statement as a PDF — at wallet level.</div>
+              <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+              <div class="api-remark"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Group 5: Wallet Management -->
+        <div class="api-group">
+          <div class="group-header" onclick="toggleGroup(this)">
+            <span class="group-num">5</span>
+            <span class="group-title">Wallet Management</span>
+            <span class="group-toggle open">▼</span>
+          </div>
+          <div class="group-body">
+            <div class="api-rows-header">
+              <div>#</div><div>API / Webhook</div><div>Description</div><div>Required</div><div>Notes</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">1</div>
+              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/walletbalance" target="_blank">Wallet Balance</a><span class="type-tag type-api">API</span></div>
+              <div class="api-desc">Fetch corporate customer-level wallet balance.</div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark"></div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">2</div>
+              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/wallettransfer" target="_blank">Wallet to Wallet Transfer</a><span class="type-tag type-api">API</span></div>
+              <div class="api-desc">Perform wallet transactions between corporate customers within or across programs (P2P).</div>
+              <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+              <div class="api-remark">Only needed if your use case allows P2P transfers within the program.</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">3</div>
+              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/transactions-1" target="_blank">Transactions</a><span class="type-tag type-api">API</span></div>
+              <div class="api-desc">Fetch corporate wallet transactions.</div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Group 6: Deprecated -->
+        <div class="api-group">
+          <div class="group-header" onclick="toggleGroup(this)" style="opacity:0.75">
+            <span class="group-num depr">⚠</span>
+            <span class="group-title">Deprecated APIs — Do Not Use</span>
+            <span class="group-toggle">▼</span>
+          </div>
+          <div class="group-body" style="display:none">
+            <div class="warn-box">These APIs are deprecated and will be removed. Use the replacements listed below. Do not implement deprecated APIs in new integrations.</div>
+            <div class="api-rows-header">
+              <div>#</div><div>Deprecated API</div><div>Description</div><div>Required</div><div>Use Instead</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">1</div>
+              <div class="api-name-cell"><span class="api-link" style="color:var(--no-color);cursor:default">Customer Details</span><span class="type-tag type-api" style="opacity:0.5">API</span></div>
+              <div class="api-desc" style="text-decoration:line-through;opacity:0.5">Deprecated API</div>
+              <div class="api-req-cell"><span class="pill pill-no">NO</span></div>
+              <div class="api-remark">Use <strong>Customer Details V5</strong></div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">2</div>
+              <div class="api-name-cell"><span class="api-link" style="color:var(--no-color);cursor:default">Customer List V2</span><span class="type-tag type-api" style="opacity:0.5">API</span></div>
+              <div class="api-desc" style="text-decoration:line-through;opacity:0.5">Deprecated API</div>
+              <div class="api-req-cell"><span class="pill pill-no">NO</span></div>
+              <div class="api-remark">Use <strong>Customer List V3</strong></div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">3</div>
+              <div class="api-name-cell"><span class="api-link" style="color:var(--no-color);cursor:default">Customer List</span><span class="type-tag type-api" style="opacity:0.5">API</span></div>
+              <div class="api-desc" style="text-decoration:line-through;opacity:0.5">Deprecated API</div>
+              <div class="api-req-cell"><span class="pill pill-no">NO</span></div>
+              <div class="api-remark">Use <strong>Customer List V3</strong></div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">4</div>
+              <div class="api-name-cell"><span class="api-link" style="color:var(--no-color);cursor:default">P2P Transfer</span><span class="type-tag type-api" style="opacity:0.5">API</span></div>
+              <div class="api-desc" style="text-decoration:line-through;opacity:0.5">Deprecated API</div>
+              <div class="api-req-cell"><span class="pill pill-no">NO</span></div>
+              <div class="api-remark">Use <strong>Wallet to Wallet Transfer</strong></div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /tab-v5 -->
+
+      <!-- Pre-built Form Tab -->
+      <div class="tab-content" id="tab-prebuilt">
+        <div class="info-box">NIUM Pre-built Onboarding Forms are hosted and managed by NIUM. Clients invite customers via a secure link, while NIUM handles form UX, KYB/KYC execution, and compliance decisions.</div>
+
+        <!-- Step 1 -->
+        <div class="api-group">
+          <div class="group-header" onclick="toggleGroup(this)">
+            <span class="group-num">1</span>
+            <span class="group-title">Setup &amp; Configuration (One-time)</span>
+            <span class="group-toggle open">▼</span>
+          </div>
+          <div class="group-body">
+            <div class="api-rows-header"><div>#</div><div>Step</div><div>Description</div><div>Required</div><div>Notes</div></div>
+            <div class="api-row">
+              <div class="api-num">1</div>
+              <div class="api-name-cell"><span class="api-link" style="cursor:default">Request Access</span></div>
+              <div class="api-desc">Contact your NIUM account manager or <a href="mailto:support@nium.com" style="color:var(--nium-teal)">support@nium.com</a> to enable Pre-built Forms and provide your branding (logo).</div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark">One-time setup. Logo appears top-left on the form.</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">2</div>
+              <div class="api-name-cell"><span class="api-link" style="cursor:default">Setup Customer Status Webhook</span><span class="type-tag type-webhook">Webhook</span></div>
+              <div class="api-desc">Configure your endpoint to receive Customer Status event webhooks. Use the <span class="url-code">externalId</span> field to track status changes per customer.</div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark">Required to track onboarding progress. <a class="remark-link" href="https://docs.nium.com/docs/reference/customer-status" target="_blank">↗ Ref</a></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="api-group">
+          <div class="group-header" onclick="toggleGroup(this)">
+            <span class="group-num">2</span>
+            <span class="group-title">Create Session API — <span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:400">featureType: customer_onboarding_form</span></span>
+            <span class="group-toggle open">▼</span>
+          </div>
+          <div class="group-body">
+            <div class="api-rows-header"><div>#</div><div>API / Webhook</div><div>Description</div><div>Required</div><div>Notes</div></div>
+            <div class="api-row">
+              <div class="api-num">1</div>
+              <div class="api-name-cell">
+                <a class="api-link" href="https://docs.nium.com/api#tag/sessions/POST/api/v1/client/{clientHashId}/sessions" target="_blank">Create a Session</a>
+                <span class="type-tag type-api">API</span>
+                <span class="url-code" style="margin-top:2px">POST /api/v1/client/{'{'}clientHashId{'}'}/sessions</span>
+              </div>
+              <div class="api-desc">Generates a <span class="url-code">sessionId</span> that securely binds the customer's onboarding session to NIUM's hosted form component.</div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark"><a class="remark-link" href="https://docs.nium.com/api#tag/sessions/POST/api/v1/client/{clientHashId}/sessions" target="_blank">↗ Docs</a></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Session Params -->
+        <h4 style="font-size:13px;font-weight:600;color:var(--nium-muted);margin:6px 0 4px;letter-spacing:0.04em;">Session Parameters</h4>
+        <table class="params-table">
+          <thead>
+            <tr><th>Parameter</th><th>Type</th><th>Description</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="param-name">featureType</td><td class="param-type">String</td><td class="param-desc">Set to <span class="url-code">customer_onboarding_form</span></td><td class="param-note">Identifies the form type to generate</td></tr>
+            <tr><td class="param-name">clientHashId</td><td class="param-type">String</td><td class="param-desc">Your unique client identifier</td><td class="param-note">Required</td></tr>
+            <tr><td class="param-name">externalId</td><td class="param-type">String</td><td class="param-desc">Your internal unique identifier for the customer being onboarded</td><td class="param-note">Used to track webhooks per customer</td></tr>
+            <tr><td class="param-name">integrationType</td><td class="param-type">String</td><td class="param-desc"><span class="url-code">embedded</span> — form inside your portal; <span class="url-code">standalone</span> — opens in new browser tab</td><td class="param-note">Choose based on your integration preference</td></tr>
+            <tr><td class="param-name">expiry</td><td class="param-type">String</td><td class="param-desc">ISO-8601 datetime when the session link expires. Format: <span class="url-code">yyyy-MM-dd'T'HH:mm:ssXXX</span></td><td class="param-note">Create a new sessionId if the link expires</td></tr>
+            <tr><td class="param-name">rollingDurationMinutes</td><td class="param-type">Long</td><td class="param-desc">Inactivity timeout in whole minutes (minimum: 1)</td><td class="param-note">Session expires if customer is inactive for this duration</td></tr>
+            <tr><td class="param-name">domain</td><td class="param-type">String</td><td class="param-desc">Domain where the form is embedded — required for <span class="url-code">embedded</span> integrationType</td><td class="param-note">Must match the session domain</td></tr>
+            <tr><td class="param-name">onBehalf</td><td class="param-type">Boolean</td><td class="param-desc">Boolean flag for on-behalf-of flows</td><td class="param-note">—</td></tr>
+            <tr><td class="param-name">email</td><td class="param-type">Email</td><td class="param-desc">Email address of the applicant — NIUM sends OTP here for verification</td><td class="param-note">Required for customer email verification step</td></tr>
+          </tbody>
+        </table>
+
+        <!-- Steps 3-6 -->
+        <div class="api-group" style="margin-top:20px">
+          <div class="group-header" onclick="toggleGroup(this)">
+            <span class="group-num">3</span>
+            <span class="group-title">Deliver the Onboarding Form to Customer</span>
+            <span class="group-toggle open">▼</span>
+          </div>
+          <div class="group-body">
+            <div class="api-rows-header"><div>#</div><div>Step</div><div>Description</div><div>Required</div><div>Notes</div></div>
+            <div class="api-row">
+              <div class="api-num">1</div>
+              <div class="api-name-cell"><span class="api-link" style="cursor:default">Pass sessionId to Pre-built Form URL</span></div>
+              <div class="api-desc">
+                Append the <span class="url-code">sessionId</span> to the NIUM Pre-built Onboarding Form URL and send it to the customer.<br>
+                <span style="font-size:11px;color:var(--nium-muted);margin-top:4px;display:block">
+                  🔵 <strong>Sandbox:</strong> <span class="url-code">https://nformify-sandbox.nium.com/customers/initial-enquiry?sessionId=&lt;sessionId&gt;</span><br>
+                  🟢 <strong>Production:</strong> <span class="url-code">https://nformify.nium.com/customers/initial-enquiry?sessionId=&lt;sessionId&gt;</span>
+                </span>
+              </div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark">Customer clicks link, verifies email via OTP, and completes the form.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="api-group">
+          <div class="group-header" onclick="toggleGroup(this)">
+            <span class="group-num">4</span>
+            <span class="group-title">Customer Completes Onboarding Form (Handled by NIUM)</span>
+            <span class="group-toggle open">▼</span>
+          </div>
+          <div class="group-body">
+            <div class="api-rows-header"><div>#</div><div>Step</div><div>Description</div><div>Required</div><div>Notes</div></div>
+            <div class="api-row">
+              <div class="api-num">1</div>
+              <div class="api-name-cell"><span class="api-link" style="cursor:default">Customer Verifies Email (OTP)</span></div>
+              <div class="api-desc">NIUM sends a one-time password to the customer's email. Customer enters the OTP to access the form.</div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark">No API call required from client — NIUM handles this.</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">2</div>
+              <div class="api-name-cell"><span class="api-link" style="cursor:default">Customer Submits Business &amp; Stakeholder Information</span></div>
+              <div class="api-desc">Customer confirms business details, enters UBOs/shareholders/directors, uploads documents, provides applicant info, accepts T&amp;C, and submits.</div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark">Save-and-resume supported. NIUM manages form UX and validation.</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">3</div>
+              <div class="api-name-cell"><span class="api-link" style="cursor:default">KYC/KYB Verification (Automated by NIUM)</span></div>
+              <div class="api-desc">NIUM executes KYB/KYC verification on submitted details. In certain regions this is handled via database verification.</div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark">Compliance decisions made entirely by NIUM.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="api-group">
+          <div class="group-header" onclick="toggleGroup(this)">
+            <span class="group-num">5</span>
+            <span class="group-title">Track Onboarding Progress via Webhooks &amp; API</span>
+            <span class="group-toggle open">▼</span>
+          </div>
+          <div class="group-body">
+            <div class="api-rows-header"><div>#</div><div>API / Webhook</div><div>Description</div><div>Required</div><div>Notes</div></div>
+            <div class="api-row">
+              <div class="api-num">1</div>
+              <div class="api-name-cell"><span class="api-link" style="cursor:default">Customer Status Webhook</span><span class="type-tag type-webhook">Webhook</span></div>
+              <div class="api-desc">NIUM sends a webhook when application status changes (e.g. SUBMITTED, RFI_REQUESTED, CLEAR, REJECTED).</div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark">Use <span class="url-code">externalId</span> to map to your internal record. <a class="remark-link" href="https://docs.nium.com/docs/reference/customer-status" target="_blank">↗ Ref</a></div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">2</div>
+              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Customer Details V5</a><span class="type-tag type-api">API</span></div>
+              <div class="api-desc">Fetch full customer and compliance status details after receiving a webhook.</div>
+              <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+              <div class="api-remark">Use to confirm compliance status and retrieve <span class="url-code">customerHashId</span> for downstream APIs.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="api-group">
+          <div class="group-header" onclick="toggleGroup(this)">
+            <span class="group-num">6</span>
+            <span class="group-title">RFI Flow — Pre-built RFI Form (if required)</span>
+            <span class="group-toggle open">▼</span>
+          </div>
+          <div class="group-body">
+            <div class="api-rows-header"><div>#</div><div>Step</div><div>Description</div><div>Required</div><div>Notes</div></div>
+            <div class="api-row">
+              <div class="api-num">1</div>
+              <div class="api-name-cell"><span class="api-link" style="cursor:default">Customer Status Webhook (RFI_REQUESTED)</span><span class="type-tag type-webhook">Webhook</span></div>
+              <div class="api-desc">If compliance requires additional info, a webhook is triggered with <span class="url-code">complianceStatus = RFI_REQUESTED</span>.</div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark">Triggers the need to send RFI form link to customer.</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">2</div>
+              <div class="api-name-cell"><span class="api-link" style="cursor:default">Create Session for RFI Form</span><span class="type-tag type-api">API</span></div>
+              <div class="api-desc">Create a new session with <span class="url-code">featureType = customer_onboarding_rfi</span> to generate an RFI form session.</div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark"><a class="remark-link" href="https://docs.nium.com/docs/pre-built-forms/rfi" target="_blank">↗ RFI Docs</a></div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">3</div>
+              <div class="api-name-cell"><span class="api-link" style="cursor:default">Deliver RFI Form URL to Customer</span></div>
+              <div class="api-desc">Send the customer the RFI form URL with the <span class="url-code">sessionId</span>. Customer completes and submits the RFI via the hosted form.</div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark">NIUM handles form UX and submission flow.</div>
+            </div>
+            <div class="api-row">
+              <div class="api-num">4</div>
+              <div class="api-name-cell"><span class="api-link" style="cursor:default">Customer Status Webhook (CLEAR)</span><span class="type-tag type-webhook">Webhook</span></div>
+              <div class="api-desc">After all RFIs are resolved and the application is approved, NIUM sends a webhook with <span class="url-code">status = CLEAR</span>. Customer is now onboarded and can initiate transactions.</div>
+              <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+              <div class="api-remark">Final confirmation of successful onboarding.</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /tab-prebuilt -->
+
+    </div><!-- /onboard-tabs -->
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 3 – PAYIN
+  ═══════════════════════════════════════════════ -->
+  <section class="section" id="payin">
+    <div class="section-header">
+      <div class="section-title-group">
+        <div class="section-eyebrow">Module</div>
+        <h2 class="section-title">Payin — Funding via Virtual Account</h2>
+        <p class="section-desc">Generate and manage Virtual Account Numbers (VANs) for corporate customers to receive inbound funds. AUD VAN assignment is an async flow.</p>
+      </div>
+    </div>
+
+    <div class="api-group">
+      <div class="group-header" onclick="toggleGroup(this)">
+        <span class="group-num">1</span>
+        <span class="group-title">Customer Funding</span>
+        <span class="group-toggle open">▼</span>
+      </div>
+      <div class="group-body">
+        <div class="api-rows-header"><div>#</div><div>API / Webhook</div><div>Description</div><div>Required</div><div>Notes</div></div>
+        <div class="api-row">
+          <div class="api-num">1</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/assignpaymentid" target="_blank">Assign Payment ID</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Generate a Virtual Account Number (VAN) for a corporate customer.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">2</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/virtual-account-assigned" target="_blank">Virtual Account Assigned Webhook</a><span class="type-tag type-webhook">Webhook</span></div>
+          <div class="api-desc">NIUM notifies you that the VAN has been successfully assigned.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark">AUD VA is an async flow — NIUM notifies you of successful creation.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">3</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/docs/reference/virtual-account-assignment-failed" target="_blank">Virtual Account Assignment Failure Webhook</a><span class="type-tag type-webhook">Webhook</span></div>
+          <div class="api-desc">NIUM notifies you that the VAN assignment failed.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark">AUD VA is an async flow — NIUM notifies you of unsuccessful creation.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">4</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/virtualaccountdetailsv2" target="_blank">Virtual Account Details V2</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Fetch virtual account number details including PayID.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark">Use V2 — do not use V1.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">5</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/managevirtualaccounttags" target="_blank">Manage Virtual Account Tags</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Manage tags associated with a virtual account.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">6</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/wallet-funding" target="_blank">Wallet Funding Webhook</a><span class="type-tag type-webhook">Webhook</span></div>
+          <div class="api-desc">Notification that wallet funding to the corporate wallet via DE/NPP was successful.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 4 – PAYOUT
+  ═══════════════════════════════════════════════ -->
+  <section class="section" id="payout">
+    <div class="section-header">
+      <div class="section-title-group">
+        <div class="section-eyebrow">Module</div>
+        <h2 class="section-title">Payout</h2>
+        <p class="section-desc">Initiate transfers from your customer's wallet to a beneficiary. Covers beneficiary data retrieval, exchange rate locking, transfer initiation, RFI handling, and webhook notifications throughout the payout lifecycle.</p>
+      </div>
+    </div>
+
+    <!-- Retrieve Beneficiary -->
+    <div class="api-group">
+      <div class="group-header" onclick="toggleGroup(this)">
+        <span class="group-num">1</span>
+        <span class="group-title">Retrieve Beneficiary Required Data</span>
+        <span class="group-toggle open">▼</span>
+      </div>
+      <div class="group-body">
+        <div class="api-rows-header"><div>#</div><div>API / Webhook</div><div>Description</div><div>Required</div><div>Notes</div></div>
+        <div class="api-row">
+          <div class="api-num">1</div>
+          <div class="api-name-cell">
+            <a class="api-link" href="https://docs.nium.com/api" target="_blank">Fetch Supported Corridors v3</a>
+            <span class="type-tag type-api">API</span>
+            <span class="url-code" style="margin-top:2px">GET /api/v3/client/{'{'}clientHashId{'}'}/customer/{'{'}customerHashId{'}'}/supportedCorridors</span>
+          </div>
+          <div class="api-desc">Retrieve supported destination currencies and countries for payouts.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark">Use the output as input for Beneficiary Validation Schema v2.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">2</div>
+          <div class="api-name-cell">
+            <a class="api-link" href="https://docs.nium.com/apis/reference/beneficiaryvalidationschemav2" target="_blank">Beneficiary Validation Schema v2</a>
+            <span class="type-tag type-api">API</span>
+            <span class="url-code" style="margin-top:2px">GET /api/v1/client/{'{'}clientHashId{'}'}/customer/{'{'}customerHashId{'}'}/beneficiaryValidationSchema</span>
+          </div>
+          <div class="api-desc">Retrieve required beneficiary and payout details based on the selected payout method.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">3</div>
+          <div class="api-name-cell">
+            <a class="api-link" href="https://docs.nium.com/apis/reference/searchroutingcodeusingbankname" target="_blank">Search Routing Code (using bank name)</a>
+            <span class="type-tag type-api">API</span>
+            <span class="url-code" style="margin-top:2px">GET /api/v1/client/{'{'}clientHashId{'}'}/transfercodes</span>
+          </div>
+          <div class="api-desc">Fetch routing code details using a bank name for use in <span class="url-code">beneficiary.payoutDetails</span>.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">4</div>
+          <div class="api-name-cell">
+            <a class="api-link" href="https://docs.nium.com/apis/reference/searchroutingcodeusingbanknamebranchname" target="_blank">Search Routing Code (using branch name)</a>
+            <span class="type-tag type-api">API</span>
+            <span class="url-code" style="margin-top:2px">GET /api/v1/client/{'{'}clientHashId{'}'}/transfercodes</span>
+          </div>
+          <div class="api-desc">Fetch routing code details using a branch name for use in <span class="url-code">beneficiary.payoutDetails</span>.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">5</div>
+          <div class="api-name-cell">
+            <a class="api-link" href="https://docs.nium.com/apis/reference/fetchbankdetailsusingroutingcode" target="_blank">Fetch Bank Details using Routing Code</a>
+            <span class="type-tag type-api">API</span>
+            <span class="url-code" style="margin-top:2px">GET /api/v1/client/{'{'}clientHashId{'}'}/transfercodes</span>
+          </div>
+          <div class="api-desc">Retrieve bank details based on a routing code for use in <span class="url-code">beneficiary.payoutDetails</span>.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transfer Money -->
+    <div class="api-group">
+      <div class="group-header" onclick="toggleGroup(this)">
+        <span class="group-num">2</span>
+        <span class="group-title">Transfer Money with Inline Beneficiary</span>
+        <span class="group-toggle open">▼</span>
+      </div>
+      <div class="group-body">
+        <div class="api-rows-header"><div>#</div><div>API / Webhook</div><div>Description</div><div>Required</div><div>Notes</div></div>
+        <div class="api-row">
+          <div class="api-num">1</div>
+          <div class="api-name-cell">
+            <a class="api-link" href="https://docs.nium.com/apis/reference/exchangeratelockandhold" target="_blank">Fetch and Lock Exchange Rate</a>
+            <span class="type-tag type-api">API</span>
+            <span class="url-code" style="margin-top:2px">GET /api/v1/…/lockExchangeRate</span>
+          </div>
+          <div class="api-desc">Retrieve and lock an exchange rate. Returns an <span class="url-code">Audit_ID</span> required for Transfer Money in cross-currency transactions.</div>
+          <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
+          <div class="api-remark">Required only for cross-currency transactions.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">2</div>
+          <div class="api-name-cell">
+            <a class="api-link" href="https://docs.nium.com/api" target="_blank">Fetch Purpose Code</a>
+            <span class="type-tag type-api">API</span>
+            <span class="url-code" style="margin-top:2px">GET /api/v1/remittance/purposeCodes</span>
+          </div>
+          <div class="api-desc">Retrieve purpose codes required for the Transfer Money request body.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">3</div>
+          <div class="api-name-cell">
+            <a class="api-link" href="https://docs.nium.com/apis/reference/transfermoney" target="_blank">Transfer Money</a>
+            <span class="type-tag type-api">API</span>
+            <span class="url-code" style="margin-top:2px">POST /api/v1/…/remittance</span>
+          </div>
+          <div class="api-desc">Initiates a transfer from your customer (remitter) to the beneficiary.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">4</div>
+          <div class="api-name-cell">
+            <a class="api-link" href="https://docs.nium.com/apis/reference/fetchremittancelifecyclestatus" target="_blank">Fetch Remittance Life Cycle Status</a>
+            <span class="type-tag type-api">API</span>
+            <span class="url-code" style="margin-top:2px">GET /api/v1/…/remittance/{'{'}systemReferenceNumber{'}'}/audit</span>
+          </div>
+          <div class="api-desc">Retrieve the full lifecycle status of a remittance transaction.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RFI Flow -->
+    <div class="api-group">
+      <div class="group-header" onclick="toggleGroup(this)">
+        <span class="group-num">3</span>
+        <span class="group-title">Transaction (Transfer) RFI Flow</span>
+        <span class="group-toggle open">▼</span>
+      </div>
+      <div class="group-body">
+        <div class="api-rows-header"><div>#</div><div>API / Webhook</div><div>Description</div><div>Required</div><div>Notes</div></div>
+        <div class="api-row">
+          <div class="api-num">1</div>
+          <div class="api-name-cell">
+            <a class="api-link" href="https://docs.nium.com/docs/reference/callback-to-receive-transaction-compliance-status" target="_blank">Transaction Compliance Status</a>
+            <span class="type-tag type-callback">Callback</span>
+            <span class="url-code" style="margin-top:2px">POST /callback [compliance status callback]</span>
+          </div>
+          <div class="api-desc">Triggered when there's a screening hit — updates status to <span class="url-code">RFI_REQUESTED</span> and sends a compliance callback to your endpoint.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">2</div>
+          <div class="api-name-cell">
+            <a class="api-link" href="https://docs.nium.com/apis/reference/transactions" target="_blank">Transactions</a>
+            <span class="type-tag type-api">API</span>
+            <span class="url-code" style="margin-top:2px">GET /api/v1/…/transactions</span>
+          </div>
+          <div class="api-desc">Fetch transaction details upon receiving the compliance callback. If status is <span class="url-code">RFI_REQUESTED</span>, refer to <span class="url-code">RFIDETAILS</span> in the response.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">3</div>
+          <div class="api-name-cell">
+            <a class="api-link" href="https://docs.nium.com/apis/reference/respondtotransactionrfi" target="_blank">Response to Transaction RFI</a>
+            <span class="type-tag type-api">API</span>
+            <span class="url-code" style="margin-top:2px">POST /api/v1/…/remittance/{'{'}systemReferenceNumber{'}'}/rfi</span>
+          </div>
+          <div class="api-desc">Submit your response to RFIs for transactions under compliance review.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payout Webhooks -->
+    <div class="api-group">
+      <div class="group-header" onclick="toggleGroup(this)">
+        <span class="group-num">4</span>
+        <span class="group-title">Other Payout Webhooks — Lifecycle Notifications</span>
+        <span class="group-toggle open">▼</span>
+      </div>
+      <div class="group-body">
+        <div class="api-rows-header"><div>#</div><div>API / Webhook</div><div>Description</div><div>Required</div><div>Notes</div></div>
+        <div class="api-row">
+          <div class="api-num">1</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/docs/reference/remit-transaction-initiated" target="_blank">Remit Transaction Initiated</a><span class="type-tag type-webhook">Webhook</span></div>
+          <div class="api-desc">Notifies when a payout transaction moves from compliance screening to the Network/Bank Partner.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark">Template: <span class="url-code">REMIT_TRANSACTION_INITIATED_WEBHOOK</span></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">2</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/docs/reference/remit-transaction-sent-to-bank" target="_blank">Remit Transaction Sent to Bank</a><span class="type-tag type-webhook">Webhook</span></div>
+          <div class="api-desc">Notifies when a payout transaction is sent from Bank Partner to Intermediary/Beneficiary Banks.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark">Template: <span class="url-code">REMIT_TRANSACTION_SENT_TO_BANK_WEBHOOK</span></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">3</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/docs/reference/remit-transaction-returned" target="_blank">Remit Transaction Returned</a><span class="type-tag type-webhook">Webhook</span></div>
+          <div class="api-desc">Notifies when a payout transaction is returned.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark">Template: <span class="url-code">REMIT_TRANSACTION_RETURNED_WEBHOOK</span></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">4</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/docs/reference/remit-transaction-rejected" target="_blank">Remit Transaction Rejected</a><span class="type-tag type-webhook">Webhook</span></div>
+          <div class="api-desc">Notifies when a payout is rejected due to incorrect configuration, insufficient wallet balance, or exceeding transaction limits.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark">Template: <span class="url-code">REMIT_TRANSACTION_REJECTED_WEBHOOK</span></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">5</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/docs/reference/remit-transaction-paid" target="_blank">Remit Transaction Paid</a><span class="type-tag type-webhook">Webhook</span></div>
+          <div class="api-desc">Notifies when a payout is paid. Note: status may update from paid to returned if payment is returned by beneficiary/banks.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark">Template: <span class="url-code">REMIT_TRANSACTION_PAID_WEBHOOK</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 5 – CARDS
+  ═══════════════════════════════════════════════ -->
+  <section class="section" id="cards">
+    <div class="section-header">
+      <div class="section-title-group">
+        <div class="section-eyebrow">Module</div>
+        <h2 class="section-title">Card Management</h2>
+        <p class="section-desc">Covers the full card lifecycle — issuance, activation, security, 3DS authentication, and spending controls. Primarily used for Spend Management and Full Stack use cases.</p>
+      </div>
+    </div>
+
+    <!-- Card Lifecycle -->
+    <div class="api-group">
+      <div class="group-header" onclick="toggleGroup(this)">
+        <span class="group-num">7</span>
+        <span class="group-title">Card Lifecycle</span>
+        <span class="group-toggle open">▼</span>
+      </div>
+      <div class="group-body">
+        <div class="api-rows-header"><div>#</div><div>API / Webhook</div><div>Description</div><div>Required</div><div>Notes</div></div>
+        <div class="api-row">
+          <div class="api-num">1</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/addcardv2" target="_blank">Add Card V2</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Issue a card (virtual or physical). For T&amp;E cards: provide Corporate details and set <span class="url-code">ChildCustomerHashId</span> to employee's <span class="url-code">customerHashId</span>. Provide email/phone for SMS notifications and delivery address for physical cards.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark">Spend Management use case.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">2</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Activate Card V2</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Activate a physical card using the 8-digit numeric Activation Code from the envelope or printed on card.</div>
+          <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
+          <div class="api-remark">Required for Physical Card issuance.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">3</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/carddetailsv2" target="_blank">Card Details V2</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Fetch card details.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">4</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/updatecarddetailsv2" target="_blank">Update Card Details V2</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Update card details such as mobile and email of the cardholder.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark">Required to update phone so NIUM sends transaction OTP-SMS to the correct number.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">5</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/cardlistv2" target="_blank">Card List V2</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Fetch the list of cards.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark">Use as needed.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">6</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Get Card Details Widget</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Fetch card details via a PCI-safe widget.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark">For non-PCI DSS environments. Alternatively use Show Security Details Encrypted.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">7</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Block and Replace Card</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Block a card — optionally replace with a new card at the same time.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">8</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Convert Card</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Convert a virtual card to a physical card.</div>
+          <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
+          <div class="api-remark">Required for Physical Card issuance.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">9</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Lock/Unlock Cards</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Freeze and unfreeze a card.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">10</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/renewcard" target="_blank">Renew Card</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Renew a card nearing expiry.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">11</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/assigncard" target="_blank">Assign Card</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Assign a pre-printed physical card to a cardholder.</div>
+          <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
+          <div class="api-remark">Required for Bulk Physical Card issuance.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Security -->
+    <div class="api-group">
+      <div class="group-header" onclick="toggleGroup(this)">
+        <span class="group-num">8</span>
+        <span class="group-title">Card Security</span>
+        <span class="group-toggle open">▼</span>
+      </div>
+      <div class="group-body">
+        <div class="api-rows-header"><div>#</div><div>API / Webhook</div><div>Description</div><div>Required</div><div>Notes</div></div>
+        <div class="api-row">
+          <div class="api-num">1</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/fetchpinstatus" target="_blank">Fetch Pin Status</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Fetch PIN status.</div>
+          <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
+          <div class="api-remark">Required if you have set a PIN via Set/Reset PIN v2.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">2</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Unblock PIN</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Unblock a PIN that was locked after too many wrong PIN entries.</div>
+          <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
+          <div class="api-remark">Required if you see transaction declines due to PIN blocked.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">3</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/fetchatmpinv2" target="_blank">Fetch ATM PIN v2</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Fetch base64-encoded ATM PIN. UK/EU cards only.</div>
+          <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
+          <div class="api-remark">UK/EU only — read the description.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">4</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/setresetpinv2" target="_blank">Set/Reset PIN V2</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Set the PIN for a card.</div>
+          <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
+          <div class="api-remark">Required for Card Present transactions.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">5</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/showsecuritydetailsencrypted" target="_blank">Show Security Details Encrypted</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Show sensitive card data (unmasked card number, CVV2, expiry date) in an encrypted format.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark">This replaces the deprecated Fetch CVV2 and Unmask Card APIs.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3DS -->
+    <div class="api-group">
+      <div class="group-header" onclick="toggleGroup(this)">
+        <span class="group-num">9</span>
+        <span class="group-title">3DS Transaction Handling — OOB Authentication</span>
+        <span class="group-toggle open">▼</span>
+      </div>
+      <div class="group-body">
+        <div class="info-box">OOB (Out-Of-Band) authentication is a 3-step flow. Steps marked OOB flow 1/2/3 must be implemented in order. <a href="https://docs.nium.com/docs/oob-authentication-flow#oob-authentication-flow-1" target="_blank" style="color:var(--nium-teal)">Full OOB docs ↗</a></div>
+        <div class="api-rows-header"><div>#</div><div>API / Webhook</div><div>Description</div><div>Required</div><div>Notes</div></div>
+        <div class="api-row">
+          <div class="api-num">1</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/passcodeenrollmentstatus" target="_blank">3DS Passcode Enrollment Status</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Retrieve passcode enrollment status. UK/EU only.</div>
+          <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
+          <div class="api-remark">UK/EU only — read description.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">2</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/addorupdatepasscode" target="_blank">Add or Update Passcode</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Update 3DS passcode. UK/EU cards only.</div>
+          <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
+          <div class="api-remark">UK/EU only — read description.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">3</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/docs/check-authentication-method-v2" target="_blank">Check Authentication Method V2</a><span class="type-tag type-webhook">Webhook</span></div>
+          <div class="api-desc">NIUM sends this to your endpoint to check user authentication selection preference.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark"><a class="remark-link" href="https://docs.nium.com/docs/oob-authentication-flow" target="_blank">OOB Flow — Step 1 ↗</a></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">4</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/docs/initiate-oob-authentication-v2" target="_blank">Initiate OOB Authentication V2</a><span class="type-tag type-webhook">Webhook</span></div>
+          <div class="api-desc">NIUM sends this requesting you to initiate OOB — NIUM waits for your reply.</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark"><a class="remark-link" href="https://docs.nium.com/docs/oob-authentication-flow" target="_blank">OOB Flow — Step 2 ↗</a></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">5</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/docs/oob-authentication-callback" target="_blank">3DS OOB Callback V2</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Send NIUM the OOB authentication result (pass/fail).</div>
+          <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
+          <div class="api-remark"><a class="remark-link" href="https://docs.nium.com/docs/oob-authentication-flow" target="_blank">OOB Flow — Step 3 ↗</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Controls -->
+    <div class="api-group">
+      <div class="group-header" onclick="toggleGroup(this)">
+        <span class="group-num">10</span>
+        <span class="group-title">Card Controls &amp; Reference</span>
+        <span class="group-toggle open">▼</span>
+      </div>
+      <div class="group-body">
+        <div class="warn-box">For Spend Management programs, spending rules are typically managed at a program level. These APIs may not be sufficient on their own to implement full spending rule requirements.</div>
+        <div class="api-rows-header"><div>#</div><div>API / Webhook</div><div>Description</div><div>Required</div><div>Notes</div></div>
+        <div class="api-row">
+          <div class="api-num">1</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/getchannelrestriction" target="_blank">Get Channel Restriction</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Get channel restrictions set at card level (instore, online, ATM, cross-border, magnetic stripe).</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">2</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/updatechannelrestriction" target="_blank">Update Channel Restriction</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Restrict transactions at card level for a given channel.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">3</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/getmccchannelrestrictions" target="_blank">Get MCC Channel Restrictions</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Fetch MCC-based channel restrictions at card level.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">4</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/updatemccchannelrestrictions" target="_blank">Update MCC Channel Restrictions</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Create MCC-based channel restrictions at card level.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">5</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Fetch Card Limits</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Fetch card spending limits.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">6</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Card Limits</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Set card spending limits.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">7</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/limitsforallcardsforacustomer" target="_blank">Limits For All Cards For A Customer</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Fetch card-level limits for all cards belonging to a customer.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">8</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/referenceexchangerate" target="_blank">Reference Exchange Rate</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Fetch ECB reference rate. UK/EU cards only.</div>
+          <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
+          <div class="api-remark">UK/EU only — read description.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deprecated -->
+    <div class="api-group">
+      <div class="group-header" onclick="toggleGroup(this)" style="opacity:0.75">
+        <span class="group-num depr">⚠</span>
+        <span class="group-title">Deprecated Card APIs — Do Not Use</span>
+        <span class="group-toggle">▼</span>
+      </div>
+      <div class="group-body" style="display:none">
+        <div class="warn-box">These APIs are deprecated. Do not implement them in new integrations.</div>
+        <div class="api-rows-header"><div>#</div><div>Deprecated API</div><div>Description</div><div>Required</div><div>Use Instead</div></div>
+        <div class="api-row"><div class="api-num">1</div><div class="api-name-cell"><span style="color:var(--no-color)">Add Card</span></div><div class="api-desc" style="opacity:0.5">Deprecated</div><div class="api-req-cell"><span class="pill pill-no">NO</span></div><div class="api-remark">→ <strong>Add Card V2</strong></div></div>
+        <div class="api-row"><div class="api-num">2</div><div class="api-name-cell"><span style="color:var(--no-color)">Card Details</span></div><div class="api-desc" style="opacity:0.5">Deprecated</div><div class="api-req-cell"><span class="pill pill-no">NO</span></div><div class="api-remark">→ <strong>Card Details V2</strong></div></div>
+        <div class="api-row"><div class="api-num">3</div><div class="api-name-cell"><span style="color:var(--no-color)">Activate Card</span></div><div class="api-desc" style="opacity:0.5">Deprecated</div><div class="api-req-cell"><span class="pill pill-no">NO</span></div><div class="api-remark">→ <strong>Activate Card V2</strong></div></div>
+        <div class="api-row"><div class="api-num">4</div><div class="api-name-cell"><span style="color:var(--no-color)">Block/Unblock Cards</span></div><div class="api-desc" style="opacity:0.5">Deprecated</div><div class="api-req-cell"><span class="pill pill-no">NO</span></div><div class="api-remark">→ <strong>Lock/Unlock Cards</strong></div></div>
+        <div class="api-row"><div class="api-num">5</div><div class="api-name-cell"><span style="color:var(--no-color)">Issue Replacement Card</span></div><div class="api-desc" style="opacity:0.5">Deprecated</div><div class="api-req-cell"><span class="pill pill-no">NO</span></div><div class="api-remark">→ <strong>Block and Replace Card</strong></div></div>
+        <div class="api-row"><div class="api-num">6</div><div class="api-name-cell"><span style="color:var(--no-color)">Card List</span></div><div class="api-desc" style="opacity:0.5">Deprecated</div><div class="api-req-cell"><span class="pill pill-no">NO</span></div><div class="api-remark">→ <strong>Card List V2</strong></div></div>
+        <div class="api-row"><div class="api-num">7</div><div class="api-name-cell"><span style="color:var(--no-color)">Fetch card data encrypted</span></div><div class="api-desc" style="opacity:0.5">Deprecated</div><div class="api-req-cell"><span class="pill pill-no">NO</span></div><div class="api-remark">→ <strong>Show Security Details Encrypted</strong></div></div>
+        <div class="api-row"><div class="api-num">8</div><div class="api-name-cell"><span style="color:var(--no-color)">Fetch ATM PIN</span></div><div class="api-desc" style="opacity:0.5">Deprecated</div><div class="api-req-cell"><span class="pill pill-no">NO</span></div><div class="api-remark">→ <strong>Fetch ATM PIN V2</strong></div></div>
+        <div class="api-row"><div class="api-num">9</div><div class="api-name-cell"><span style="color:var(--no-color)">Set/Reset PIN</span></div><div class="api-desc" style="opacity:0.5">Deprecated</div><div class="api-req-cell"><span class="pill pill-no">NO</span></div><div class="api-remark">→ <strong>Set/Reset PIN V2</strong></div></div>
+        <div class="api-row"><div class="api-num">10</div><div class="api-name-cell"><span style="color:var(--no-color)">Fetch CVV2</span></div><div class="api-desc" style="opacity:0.5">Deprecated</div><div class="api-req-cell"><span class="pill pill-no">NO</span></div><div class="api-remark">→ <strong>Show Security Details Encrypted</strong></div></div>
+        <div class="api-row"><div class="api-num">11</div><div class="api-name-cell"><span style="color:var(--no-color)">Unmask Card</span></div><div class="api-desc" style="opacity:0.5">Deprecated</div><div class="api-req-cell"><span class="pill pill-no">NO</span></div><div class="api-remark">→ <strong>Show Security Details Encrypted</strong></div></div>
+        <div class="api-row"><div class="api-num">12</div><div class="api-name-cell"><span style="color:var(--no-color)">Process OOB callback</span></div><div class="api-desc" style="opacity:0.5">Deprecated</div><div class="api-req-cell"><span class="pill pill-no">NO</span></div><div class="api-remark">→ <strong>3DS OOB Callback V2</strong></div></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 6 – FOREIGN EXCHANGE
+  ═══════════════════════════════════════════════ -->
+  <section class="section" id="fx">
+    <div class="section-header">
+      <div class="section-title-group">
+        <div class="section-eyebrow">Module</div>
+        <h2 class="section-title">Foreign Exchange</h2>
+        <p class="section-desc">All FX APIs are optional — use them based on your use case requirements for currency conversion and rate locking.</p>
+      </div>
+    </div>
+
+    <div class="api-group">
+      <div class="group-header" onclick="toggleGroup(this)">
+        <span class="group-num" style="background:var(--opt-color)">1</span>
+        <span class="group-title">Exchange Rate Lock &amp; Hold</span>
+        <span class="group-toggle open">▼</span>
+      </div>
+      <div class="group-body">
+        <div class="api-rows-header"><div>#</div><div>API / Webhook</div><div>Description</div><div>Required</div><div>Notes</div></div>
+        <div class="api-row">
+          <div class="api-num">1</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Exchange Rate Lock and Hold</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Retrieve an exchange rate and lock it temporarily. Returns an <span class="url-code">auditId</span> required for Transfer Money in cross-currency transactions. Rate is held for a limited time window.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark">Read description for time window details.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="api-group">
+      <div class="group-header" onclick="toggleGroup(this)">
+        <span class="group-num" style="background:var(--opt-color)">2</span>
+        <span class="group-title">Create Quote &amp; Convert</span>
+        <span class="group-toggle open">▼</span>
+      </div>
+      <div class="group-body">
+        <div class="api-rows-header"><div>#</div><div>API / Webhook</div><div>Description</div><div>Required</div><div>Notes</div></div>
+        <div class="api-row">
+          <div class="api-num">1</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Create Quote</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Create an FX quote for a given currency pair and amount. Returns a <span class="url-code">quoteId</span> valid for a short period.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark">Use the quoteId when initiating a conversion or cross-currency payout.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">2</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Fetch Quote</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Retrieve details of a previously created quote including exchange rate, fee, and expiry time.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">3</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Create Conversion</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Initiate a currency conversion using a locked <span class="url-code">quoteId</span>. Debits source currency wallet and credits destination currency wallet.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">4</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Fetch Conversion</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Retrieve the status and details of a specific conversion transaction, including source/destination amounts and status.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">5</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">List Conversions</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">List all conversion transactions for a wallet. Supports filtering by date range and status.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">6</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/docs/reference/fx-conversion-completed" target="_blank">Conversion Status Webhook</a><span class="type-tag type-webhook">Webhook</span></div>
+          <div class="api-desc">NIUM triggers this when a conversion status changes (e.g. COMPLETED, FAILED). Your endpoint must be exposed to receive these.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark">Read description for setup.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 7 – VERIFY
+  ═══════════════════════════════════════════════ -->
+  <section class="section" id="verify">
+    <div class="section-header">
+      <div class="section-title-group">
+        <div class="section-eyebrow">Module</div>
+        <h2 class="section-title">NIUM Verify</h2>
+        <p class="section-desc">Verify a customer's bank account details before initiating a payout. All APIs are optional except where conditional requirements apply.</p>
+      </div>
+    </div>
+
+    <div class="api-group">
+      <div class="group-header" onclick="toggleGroup(this)">
+        <span class="group-num" style="background:var(--opt-color)">1</span>
+        <span class="group-title">NIUM Verify — Bank Account Verification</span>
+        <span class="group-toggle open">▼</span>
+      </div>
+      <div class="group-body">
+        <div class="api-rows-header"><div>#</div><div>API / Webhook</div><div>Description</div><div>Required</div><div>Notes</div></div>
+        <div class="api-row">
+          <div class="api-num">1</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Fetch Validation Schema for NIUM Verify</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Retrieve the validation schema based on country and <span class="url-code">accountType</span>. Used to validate account verification requests.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark">Read description for details.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">2</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">List Verifications</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">List all verifications created using NIUM Verify.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark"></div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">3</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Verify a Bank Account</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Verify the details of a customer's bank account.</div>
+          <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
+          <div class="api-remark">Read description before implementing.</div>
+        </div>
+        <div class="api-row">
+          <div class="api-num">4</div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Fetch Verification</a><span class="type-tag type-api">API</span></div>
+          <div class="api-desc">Fetch a specific NIUM Verify verification record.</div>
+          <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
+          <div class="api-remark"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <div class="doc-footer">
+    <span>NIUM API Navigator — v0.2 Draft</span>
+    <span>All hyperlinks preserved from source. <a href="https://docs.nium.com" target="_blank" style="color:var(--nium-teal)">docs.nium.com ↗</a></span>
+  </div>
+</main>
+
+<script>
+  function switchTab(tabId, containerId) {
+    const container = document.getElementById(containerId);
+    container.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    container.querySelector('#tab-' + tabId).classList.add('active');
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  function toggleGroup(header) {
+    const body = header.nextElementSibling;
+    const toggle = header.querySelector('.group-toggle');
+    if (body.style.display === 'none') {
+      body.style.display = 'block';
+      toggle.classList.add('open');
+    } else {
+      body.style.display = 'none';
+      toggle.classList.remove('open');
+    }
+  }
+
+  // Sidebar active state
+  const sections = document.querySelectorAll('section[id]');
+  const navItems = document.querySelectorAll('.nav-item[href^="#"]');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navItems.forEach(item => {
+          item.classList.remove('active');
+          if (item.getAttribute('href') === '#' + entry.target.id) {
+            item.classList.add('active');
+          }
+        });
+      }
+    });
+  }, { threshold: 0.2 });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Add reveal animation classes
+  document.querySelectorAll('.section, .api-group, .scenario-card, .client-card')
+    .forEach(el => el.classList.add('fade-in-section'));
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.fade-in-section').forEach(el => observer.observe(el));
+
+  // Add glass highlight effect
+  document.querySelectorAll('.scenario-card, .client-card').forEach(el => {
+    el.classList.add('glass-highlight');
+  });
+
+  // Sidebar active state on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-item[href^="#"]');
+
+  const activateNav = () => {
+    let current = '';
+    sections.forEach(section => {
+      const top = section.offsetTop - 120;
+      if(scrollY >= top){
+        current = section.getAttribute('id');
+      }
+    });
+
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if(link.getAttribute('href') === '#' + current){
+        link.classList.add('active');
+      }
+    });
+  };
+
+  window.addEventListener('scroll', activateNav);
+  activateNav();
+
+  // Smooth scrolling
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e){
+      const target = document.querySelector(this.getAttribute('href'));
+      if(target){
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+});
+</script>
+
+
+
+<script>
+const themeBtn = document.createElement('button');
+themeBtn.className = 'theme-toggle';
+themeBtn.innerHTML = '🌙';
+
+document.body.classList.add('light-theme');
+
+themeBtn.addEventListener('click', () => {
+  document.body.classList.toggle('light-theme');
+
+  if(document.body.classList.contains('light-theme')){
+    themeBtn.innerHTML = '🌙';
+    localStorage.setItem('deck-theme', 'light');
+  } else {
+    themeBtn.innerHTML = '☀️';
+    localStorage.setItem('deck-theme', 'dark');
+  }
+});
+
+const savedTheme = localStorage.getItem('deck-theme');
+
+if(savedTheme === 'dark'){
+  document.body.classList.remove('light-theme');
+  themeBtn.innerHTML = '☀️';
+}
+
+document.body.appendChild(themeBtn);
+</script>
+
+
+</body>
+</html>
