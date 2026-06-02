@@ -633,766 +633,1187 @@
     .api-row { grid-template-columns: 1fr; }
     .api-rows-header { display: none; }
   }
+</style>
 
-/* ===== ENHANCED UI/UX LAYER ===== */
-body{
-  background:
-    radial-gradient(circle at top left, rgba(0,194,168,0.16), transparent 28%),
-    radial-gradient(circle at top right, rgba(123,143,240,0.12), transparent 22%),
-    linear-gradient(135deg,#050814 0%,#0A0F1C 45%,#091223 100%);
-  overflow-x:hidden;
+<style id="premium-document-portal">
+/* =====================================================================
+   PREMIUM EXECUTIVE DOCUMENT PORTAL UI LAYER
+   Data, text, hyperlinks and original flow are not changed.
+===================================================================== */
+:root{
+  --portal-teal:#00C2A8;
+  --portal-blue:#4F7BFF;
+  --portal-violet:#8B5CF6;
+  --portal-amber:#F5A623;
+  --portal-red:#E05252;
+  --portal-green:#10B981;
+
+  --portal-bg:#f3f7fc;
+  --portal-bg-2:#eaf1f9;
+  --portal-surface:rgba(255,255,255,.82);
+  --portal-surface-solid:#ffffff;
+  --portal-card:rgba(255,255,255,.92);
+  --portal-text:#0f172a;
+  --portal-muted:#64748b;
+  --portal-border:rgba(15,23,42,.09);
+  --portal-sidebar:rgba(255,255,255,.82);
+
+  --nium-dark:var(--portal-bg);
+  --nium-navy:var(--portal-surface-solid);
+  --nium-card:var(--portal-card);
+  --nium-border:var(--portal-border);
+  --nium-text:var(--portal-text);
+  --nium-muted:var(--portal-muted);
+  --nium-teal:var(--portal-teal);
+  --nium-teal-dim:rgba(0,194,168,.10);
+  --nium-teal-glow:rgba(0,194,168,.28);
+
+  --shadow-xs:0 2px 8px rgba(15,23,42,.05);
+  --shadow-sm:0 10px 26px rgba(15,23,42,.08);
+  --shadow-md:0 22px 52px rgba(15,23,42,.12);
+  --shadow-lg:0 38px 90px rgba(15,23,42,.16);
+
+  --radius-xl:34px;
+  --radius-lg:26px;
+  --radius-md:18px;
+  --radius-sm:12px;
 }
 
+body.theme-dark{
+  --portal-bg:#06101d;
+  --portal-bg-2:#0a1728;
+  --portal-surface:rgba(11,22,39,.78);
+  --portal-surface-solid:#0e1a2c;
+  --portal-card:rgba(17,30,49,.94);
+  --portal-text:#eaf1fb;
+  --portal-muted:#93a4bb;
+  --portal-border:rgba(255,255,255,.08);
+  --portal-sidebar:rgba(8,18,32,.86);
+
+  --nium-dark:var(--portal-bg);
+  --nium-navy:var(--portal-surface-solid);
+  --nium-card:var(--portal-card);
+  --nium-border:var(--portal-border);
+  --nium-text:var(--portal-text);
+  --nium-muted:var(--portal-muted);
+  --nium-teal-dim:rgba(0,194,168,.12);
+  --nium-teal-glow:rgba(0,194,168,.32);
+}
+
+*{scrollbar-width:thin;scrollbar-color:var(--portal-teal) transparent;}
+html{scroll-behavior:smooth;}
+body{
+  background:
+    radial-gradient(circle at 6% 4%, rgba(0,194,168,.16), transparent 24%),
+    radial-gradient(circle at 95% 12%, rgba(79,123,255,.12), transparent 28%),
+    radial-gradient(circle at 80% 96%, rgba(139,92,246,.10), transparent 28%),
+    linear-gradient(135deg,var(--portal-bg) 0%,var(--portal-bg-2) 100%) !important;
+  color:var(--portal-text) !important;
+  overflow-x:hidden;
+  letter-spacing:-.01em;
+}
 body::before{
-  content:'';
+  content:"";
   position:fixed;
   inset:0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-  background-size:40px 40px;
+  z-index:-2;
   pointer-events:none;
-  z-index:-1;
+  background-image:
+    linear-gradient(rgba(15,23,42,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15,23,42,.035) 1px, transparent 1px);
+  background-size:36px 36px;
+  mask-image:linear-gradient(to bottom, rgba(0,0,0,.85), rgba(0,0,0,.22));
+}
+body.theme-dark::before{
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+}
+
+/* App shell */
+.sidebar{
+  background:var(--portal-sidebar) !important;
+  border-right:1px solid var(--portal-border) !important;
+  backdrop-filter:blur(24px) saturate(145%);
+  box-shadow:14px 0 42px rgba(15,23,42,.08);
+}
+.sidebar-logo{
+  background:linear-gradient(180deg, rgba(255,255,255,.52), transparent) !important;
+  border-bottom:1px solid var(--portal-border) !important;
+}
+body.theme-dark .sidebar-logo{background:linear-gradient(180deg, rgba(255,255,255,.04), transparent) !important;}
+.logo-icon{
+  border-radius:14px !important;
+  box-shadow:0 0 0 6px rgba(0,194,168,.10), 0 16px 32px rgba(0,194,168,.22);
+  animation:portalLogoPulse 4s ease-in-out infinite;
+}
+@keyframes portalLogoPulse{
+  0%,100%{transform:translateY(0);box-shadow:0 0 0 6px rgba(0,194,168,.10),0 16px 32px rgba(0,194,168,.20)}
+  50%{transform:translateY(-2px);box-shadow:0 0 0 10px rgba(0,194,168,.08),0 20px 42px rgba(0,194,168,.32)}
+}
+.nav-label{color:var(--portal-muted) !important;}
+.nav-item{
+  margin:6px 12px !important;
+  padding:11px 14px !important;
+  border-radius:16px !important;
+  border:1px solid transparent !important;
+  transition:transform .22s ease, background .22s ease, color .22s ease, border-color .22s ease;
+  color:var(--portal-muted) !important;
+}
+.nav-item:hover{
+  transform:translateX(6px);
+  background:rgba(0,194,168,.10) !important;
+  color:var(--portal-text) !important;
+  border-color:rgba(0,194,168,.12) !important;
+}
+.nav-item.active{
+  background:linear-gradient(90deg, rgba(0,194,168,.18), rgba(79,123,255,.06)) !important;
+  color:var(--portal-teal) !important;
+  border-color:rgba(0,194,168,.22) !important;
+  box-shadow:var(--shadow-xs);
+}
+.main{position:relative;}
+
+/* Top controls */
+.top-bar{
+  top:14px !important;
+  margin:14px 22px 0 !important;
+  border-radius:22px !important;
+  background:var(--portal-surface) !important;
+  border:1px solid var(--portal-border) !important;
+  backdrop-filter:blur(26px) saturate(150%);
+  box-shadow:var(--shadow-sm);
+}
+.version-badge{
+  border-radius:999px !important;
+  padding:7px 13px !important;
+  font-weight:700 !important;
+}
+.portal-theme-toggle{
+  position:fixed;
+  right:26px;
+  bottom:26px;
+  z-index:9999;
+  width:68px;
+  height:68px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.18);
+  cursor:pointer;
+  background:linear-gradient(135deg,var(--portal-teal),var(--portal-blue),var(--portal-violet));
+  color:#fff;
+  font-size:24px;
+  box-shadow:0 24px 50px rgba(15,23,42,.22), inset 0 1px 0 rgba(255,255,255,.22);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.portal-theme-toggle:hover{transform:translateY(-5px) scale(1.06);box-shadow:0 30px 62px rgba(15,23,42,.30),0 0 30px rgba(0,194,168,.18);}
+.portal-progress{
+  position:fixed;
+  left:0;
+  top:0;
+  height:4px;
+  width:0;
+  z-index:10000;
+  background:linear-gradient(90deg,var(--portal-teal),var(--portal-blue),var(--portal-violet));
+  box-shadow:0 0 18px rgba(0,194,168,.5);
+}
+
+/* Hero deck */
+.portal-hero{
+  position:relative;
+  min-height:430px;
+  margin:22px;
+  padding:54px;
+  border-radius:42px;
+  overflow:hidden;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.95) 0%, rgba(234,243,252,.88) 48%, rgba(219,235,248,.85) 100%);
+  border:1px solid var(--portal-border);
+  box-shadow:var(--shadow-lg);
+}
+body.theme-dark .portal-hero{
+  background:linear-gradient(135deg, rgba(7,17,29,.98) 0%, rgba(16,35,61,.94) 50%, rgba(10,55,80,.90) 100%);
+}
+.portal-hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 82% 16%, rgba(0,194,168,.24), transparent 22%),
+    radial-gradient(circle at 92% 88%, rgba(139,92,246,.20), transparent 28%),
+    linear-gradient(115deg, transparent 18%, rgba(255,255,255,.16) 45%, transparent 62%);
+  animation:portalHeroShine 9s linear infinite;
+  pointer-events:none;
+}
+@keyframes portalHeroShine{0%{transform:translateX(-70%)}100%{transform:translateX(70%)}}
+.portal-hero-grid{
+  position:absolute;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(15,23,42,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15,23,42,.05) 1px, transparent 1px);
+  background-size:44px 44px;
+  mask-image:linear-gradient(to bottom, rgba(0,0,0,.85), rgba(0,0,0,.15));
+}
+body.theme-dark .portal-hero-grid{
+  background-image:
+    linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+}
+.portal-hero-content{
+  position:relative;
+  z-index:2;
+  display:grid;
+  grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);
+  gap:40px;
+  align-items:center;
+}
+.portal-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 15px;
+  border-radius:999px;
+  background:rgba(0,194,168,.10);
+  border:1px solid rgba(0,194,168,.18);
+  color:var(--portal-teal);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-bottom:22px;
+}
+.portal-title{
+  margin:0;
+  font-size:76px;
+  line-height:.93;
+  letter-spacing:-.07em;
+  font-weight:900;
+  color:var(--portal-text);
+}
+.portal-title span{
+  background:linear-gradient(90deg,var(--portal-teal),var(--portal-blue),var(--portal-violet));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.portal-subtitle{
+  max-width:760px;
+  margin-top:24px;
+  color:var(--portal-muted);
+  font-size:18px;
+  line-height:1.78;
+}
+.portal-hero-cards{display:grid;grid-template-columns:1fr;gap:16px;}
+.portal-kpi-card{
+  position:relative;
+  padding:22px;
+  border-radius:26px;
+  background:rgba(255,255,255,.62);
+  border:1px solid var(--portal-border);
+  backdrop-filter:blur(20px);
+  box-shadow:var(--shadow-sm);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+body.theme-dark .portal-kpi-card{background:rgba(255,255,255,.06);}
+.portal-kpi-card:hover{transform:translateY(-7px);box-shadow:var(--shadow-md);}
+.portal-kpi-card strong{display:block;font-size:26px;color:var(--portal-text);margin-bottom:7px;}
+.portal-kpi-card span{display:block;color:var(--portal-muted);font-size:13px;line-height:1.6;}
+
+/* Sections as deck slides */
+.section{
+  position:relative;
+  margin:30px 22px !important;
+  padding:46px !important;
+  border-radius:var(--radius-xl) !important;
+  background:var(--portal-surface) !important;
+  border:1px solid var(--portal-border) !important;
+  backdrop-filter:blur(24px) saturate(150%);
+  box-shadow:var(--shadow-md);
+  overflow:hidden;
+}
+.section::before{
+  content:"" !important;
+  position:absolute !important;
+  top:0 !important;
+  left:46px !important;
+  width:180px !important;
+  height:5px !important;
+  border-radius:999px !important;
+  background:linear-gradient(90deg,var(--portal-teal),var(--portal-blue),transparent) !important;
+}
+.section::after{
+  content:"";
+  position:absolute;
+  right:-90px;
+  top:-90px;
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  background:rgba(0,194,168,.08);
+  filter:blur(6px);
+  pointer-events:none;
+}
+.section-title{
+  font-size:42px !important;
+  font-weight:900 !important;
+  letter-spacing:-.045em !important;
+  color:var(--portal-text) !important;
+  background:none !important;
+  -webkit-text-fill-color:currentColor !important;
+}
+.section-eyebrow{font-weight:900 !important;letter-spacing:.14em !important;}
+.section-desc{font-size:16px !important;line-height:1.78 !important;color:var(--portal-muted) !important;}
+.legend-row{gap:10px !important;}
+.legend-badge,.pill,.type-tag{
+  border-radius:999px !important;
+  font-weight:800 !important;
+  letter-spacing:.02em;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+/* Main navigator table: correctly aligned */
+.nav-table-wrap{
+  border-radius:var(--radius-lg) !important;
+  border:1px solid var(--portal-border) !important;
+  background:rgba(255,255,255,.45) !important;
+  padding:10px;
+  overflow:auto;
+  box-shadow:var(--shadow-sm);
+}
+body.theme-dark .nav-table-wrap{background:rgba(255,255,255,.035) !important;}
+.nav-table{
+  width:100% !important;
+  min-width:1180px;
+  border-collapse:separate !important;
+  border-spacing:0 10px !important;
+  table-layout:fixed !important;
+}
+.nav-table thead th{
+  background:linear-gradient(135deg,#0d1b35,#1b4f77) !important;
+  color:#fff !important;
+  padding:15px 14px !important;
+  border:none !important;
+  text-align:center !important;
+  font-size:11px !important;
+  letter-spacing:.09em !important;
+  line-height:1.35;
+  vertical-align:middle;
+}
+.nav-table thead tr:first-child th:first-child{border-radius:18px 0 0 0 !important;}
+.nav-table thead tr:first-child th:last-child{border-radius:0 18px 0 0 !important;}
+.nav-table thead tr:last-child th:first-child{border-radius:0 0 0 18px !important;}
+.nav-table thead tr:last-child th:last-child{border-radius:0 0 18px 0 !important;}
+.nav-table th.module-col{width:250px !important;min-width:250px !important;text-align:left !important;}
+.nav-table th.usecase-col{width:130px !important;min-width:130px !important;}
+.nav-table tbody tr{
+  background:var(--portal-card);
+  box-shadow:var(--shadow-xs);
+  transition:transform .22s ease, box-shadow .22s ease, background .22s ease;
+}
+.nav-table tbody tr:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--shadow-hover);
+}
+.nav-table tbody td{
+  padding:17px 14px !important;
+  border:none !important;
+  vertical-align:middle !important;
+  text-align:center;
+  line-height:1.55;
+  background:transparent !important;
+}
+.nav-table tbody td:first-child{
+  border-radius:18px 0 0 18px;
+  text-align:left;
+  font-weight:800;
+}
+.nav-table tbody td:last-child{border-radius:0 18px 18px 0;}
+.module-link{font-size:14px !important;font-weight:900 !important;}
+
+/* API groups: clean document cards */
+.api-group{
+  margin-bottom:34px !important;
+  border-radius:var(--radius-lg) !important;
+  overflow:hidden;
+  border:1px solid var(--portal-border) !important;
+  background:rgba(255,255,255,.44);
+  box-shadow:var(--shadow-sm);
+}
+body.theme-dark .api-group{background:rgba(255,255,255,.03);}
+.group-header{
+  padding:22px 24px !important;
+  min-height:78px;
+  border:none !important;
+  background:linear-gradient(90deg, rgba(0,194,168,.13), rgba(79,123,255,.05), transparent) !important;
+}
+.group-header:hover{background:linear-gradient(90deg, rgba(0,194,168,.20), rgba(79,123,255,.08), transparent) !important;}
+.group-num{width:34px !important;height:34px !important;border-radius:12px !important;box-shadow:0 10px 22px rgba(0,194,168,.20);}
+.group-title{font-size:19px !important;font-weight:900 !important;color:var(--portal-text) !important;}
+.group-body{
+  padding:12px !important;
+  background:transparent !important;
+  border:none !important;
+}
+.api-rows-header{
+  display:grid !important;
+  grid-template-columns:56px minmax(220px,2fr) minmax(320px,3fr) 132px minmax(190px,1.35fr) !important;
+  border-radius:16px;
+  overflow:hidden;
+  margin-bottom:10px;
+  background:linear-gradient(135deg,#0d1b35,#173f6a) !important;
+  border:none !important;
+}
+.api-rows-header>div{
+  padding:12px 14px !important;
+  color:#fff !important;
+  border-right:1px solid rgba(255,255,255,.12) !important;
+  font-weight:900 !important;
+  letter-spacing:.09em !important;
+}
+.api-row{
+  display:grid !important;
+  grid-template-columns:56px minmax(220px,2fr) minmax(320px,3fr) 132px minmax(190px,1.35fr) !important;
+  align-items:stretch !important;
+  gap:0 !important;
+  margin:10px 0;
+  border-radius:18px;
+  background:var(--portal-card) !important;
+  border:1px solid var(--portal-border) !important;
+  overflow:hidden;
+  box-shadow:var(--shadow-xs);
+  transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+.api-row:hover{
+  transform:translateX(6px);
+  box-shadow:var(--shadow-hover);
+  border-color:rgba(0,194,168,.24) !important;
+}
+.api-row>div{
+  padding:16px 15px !important;
+  border-right:1px solid var(--portal-border) !important;
+  display:flex !important;
+  align-items:center !important;
+  min-width:0;
+  background:transparent !important;
+}
+.api-row>div:last-child{border-right:none !important;}
+.api-num{
+  justify-content:center;
+  color:var(--portal-muted) !important;
+  font-weight:900 !important;
+}
+.api-name-cell{align-items:flex-start !important;justify-content:center;gap:7px !important;}
+.api-link{font-weight:900 !important;font-size:14px !important;line-height:1.35 !important;color:var(--portal-text) !important;word-break:break-word;}
+.api-link:hover{color:var(--portal-teal) !important;}
+.api-desc,.api-remark{color:var(--portal-muted) !important;line-height:1.62 !important;}
+.api-req-cell{justify-content:center !important;}
+
+/* Client cards / scenarios / params */
+.client-grid{gap:18px !important;}
+.client-card,.scenario-card,.params-table{
+  border-radius:var(--radius-lg) !important;
+  border:1px solid var(--portal-border) !important;
+  background:var(--portal-card) !important;
+  box-shadow:var(--shadow-sm);
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.client-card:hover,.scenario-card:hover{
+  transform:translateY(-7px);
+  box-shadow:var(--shadow-hover);
+  border-color:rgba(0,194,168,.24) !important;
+}
+.scenario-head{background:linear-gradient(90deg, rgba(0,194,168,.10), transparent) !important;}
+.params-table{border-collapse:separate !important;border-spacing:0 !important;overflow:hidden;}
+.params-table th{
+  background:linear-gradient(135deg,#0d1b35,#173f6a) !important;
+  color:#fff !important;
+  padding:15px 16px !important;
+}
+.params-table td{padding:15px 16px !important;border-bottom:1px solid var(--portal-border) !important;}
+.info-box,.warn-box{
+  border-radius:18px !important;
+  backdrop-filter:blur(16px);
+  box-shadow:var(--shadow-xs);
+}
+.doc-footer{
+  margin:22px;
+  border-radius:22px;
+  background:var(--portal-surface) !important;
+  border:1px solid var(--portal-border) !important;
+}
+
+/* Reveal animation */
+.portal-reveal{opacity:0;transform:translateY(28px);transition:opacity .75s cubic-bezier(.2,.65,.3,1), transform .75s cubic-bezier(.2,.65,.3,1);}
+.portal-reveal.is-visible{opacity:1;transform:translateY(0);}
+
+::-webkit-scrollbar{width:12px;height:12px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--portal-teal),var(--portal-blue));border-radius:999px;border:3px solid transparent;background-clip:content-box;}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,var(--portal-blue),var(--portal-violet));background-clip:content-box;}
+
+@media(max-width:1100px){
+  .portal-hero{padding:38px 30px;}
+  .portal-hero-content{grid-template-columns:1fr;}
+  .portal-title{font-size:56px;}
+  .api-row,.api-rows-header{grid-template-columns:1fr !important;}
+  .api-rows-header{display:none !important;}
+  .api-row>div{border-right:none !important;border-bottom:1px solid var(--portal-border) !important;}
+  .api-row>div:last-child{border-bottom:none !important;}
+  .api-row>div::before{content:attr(data-label);font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--portal-muted);margin-right:14px;min-width:86px;}
+}
+@media(max-width:900px){
+  .top-bar{top:8px;margin:10px !important;}
+  .portal-hero{margin:12px;padding:30px 22px;border-radius:30px;}
+  .portal-title{font-size:42px;}
+  .portal-subtitle{font-size:15px;}
+  .section{margin:18px 10px !important;padding:26px !important;border-radius:26px !important;}
+  .section-title{font-size:30px !important;}
+  .nav-table{min-width:1080px;}
+  .portal-theme-toggle{right:16px;bottom:16px;width:58px;height:58px;font-size:21px;}
+}
+</style>
+
+
+
+<style id="flawless-responsive-alignment-fix">
+/* =====================================================================
+   FLAWLESS RESPONSIVE ALIGNMENT FIX
+   Purpose: keep every table, card, code value, and portal section inside
+   the browser frame at 100% zoom and across desktop / tablet / mobile.
+   Content and hyperlinks are untouched.
+===================================================================== */
+:root{
+  --shadow-hover:0 18px 48px rgba(15,23,42,.14);
+  --content-max:1680px;
+}
+
+html,body{
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden !important;
+}
+
+body{
+  min-width:0 !important;
 }
 
 .sidebar{
-  backdrop-filter: blur(16px);
-  background: rgba(13,27,53,0.82);
-  box-shadow: 10px 0 40px rgba(0,0,0,0.35);
-}
-
-.sidebar-logo{
-  position:sticky;
-  top:0;
-  background: rgba(13,27,53,0.92);
-  backdrop-filter: blur(12px);
-  z-index:5;
-}
-
-.logo-icon{
-  box-shadow: 0 0 22px rgba(0,194,168,0.55);
-  animation:pulseGlow 3s infinite ease-in-out;
-}
-
-@keyframes pulseGlow{
-  0%,100%{transform:scale(1);box-shadow:0 0 18px rgba(0,194,168,0.45);}
-  50%{transform:scale(1.06);box-shadow:0 0 28px rgba(0,194,168,0.75);}
-}
-
-.nav-item{
-  border-radius:0 14px 14px 0;
-  margin-right:10px;
-  position:relative;
-  overflow:hidden;
-}
-
-.nav-item::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:linear-gradient(90deg, rgba(0,194,168,0.18), transparent);
-  opacity:0;
-  transition:opacity .3s ease;
-}
-
-.nav-item:hover::before,
-.nav-item.active::before{
-  opacity:1;
-}
-
-.top-bar{
-  background: rgba(13,27,53,0.74);
-  backdrop-filter: blur(18px);
-  box-shadow:0 10px 30px rgba(0,0,0,0.22);
-}
-
-.section{
-  position:relative;
-}
-
-.section::before{
-  content:'';
-  position:absolute;
-  top:0;
-  left:32px;
-  width:100px;
-  height:2px;
-  background:linear-gradient(90deg,var(--nium-teal),transparent);
-}
-
-.section-title{
-  font-size:30px;
-  background: linear-gradient(90deg,#ffffff,#7eead8);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-
-.section-desc{
-  font-size:15px;
-}
-
-.legend-badge,
-.pill,
-.type-tag,
-.version-badge{
-  backdrop-filter: blur(12px);
-}
-
-.client-card,
-.scenario-card,
-.nav-table-wrap,
-.group-body,
-.params-table{
-  background: rgba(17,25,40,0.72);
-  backdrop-filter: blur(16px);
-  box-shadow:
-    0 8px 32px rgba(0,0,0,0.22),
-    inset 0 1px 0 rgba(255,255,255,0.03);
-}
-
-.client-card:hover,
-.scenario-card:hover{
-  transform: translateY(-6px) scale(1.01);
-  box-shadow:
-    0 18px 40px rgba(0,0,0,0.35),
-    0 0 0 1px rgba(0,194,168,0.18);
-}
-
-.nav-table tbody tr,
-.api-row,
-.client-card,
-.scenario-card,
-.api-group{
-  transition:all .28s ease;
-}
-
-.nav-table tbody tr:hover{
-  transform:scale(1.002);
-}
-
-.api-group{
-  border-radius:16px;
-  overflow:hidden;
-  border:1px solid rgba(255,255,255,0.04);
-  margin-bottom:34px;
-}
-
-.group-header{
-  background:
-    linear-gradient(90deg, rgba(0,194,168,0.12), transparent),
-    var(--nium-navy);
-}
-
-.group-header:hover{
-  background:
-    linear-gradient(90deg, rgba(0,194,168,0.22), transparent),
-    var(--nium-navy);
-}
-
-.group-title{
-  letter-spacing:0.01em;
-}
-
-.api-row:hover{
-  background: rgba(0,194,168,0.05);
-  transform:translateX(4px);
-}
-
-.api-link{
-  position:relative;
-}
-
-.api-link::after{
-  content:'';
-  position:absolute;
-  left:0;
-  bottom:-2px;
-  width:0;
-  height:1px;
-  background:var(--nium-teal);
-  transition:width .25s ease;
-}
-
-.api-link:hover::after{
-  width:100%;
-}
-
-.tab-bar{
-  box-shadow:0 8px 24px rgba(0,0,0,0.22);
-}
-
-.tab-btn.active{
-  box-shadow:0 6px 18px rgba(0,194,168,0.4);
-}
-
-.info-box,
-.warn-box{
-  backdrop-filter: blur(10px);
-}
-
-.doc-footer{
-  background:rgba(10,15,28,0.6);
-  backdrop-filter: blur(14px);
-}
-
-.fade-in-section{
-  opacity:0;
-  transform:translateY(30px);
-  transition:all .7s cubic-bezier(.2,.65,.3,1);
-}
-
-.fade-in-section.visible{
-  opacity:1;
-  transform:translateY(0);
-}
-
-.glass-highlight{
-  position:relative;
-  overflow:hidden;
-}
-
-.glass-highlight::after{
-  content:'';
-  position:absolute;
-  top:-120%;
-  left:-30%;
-  width:40%;
-  height:300%;
-  background:linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent);
-  transform:rotate(25deg);
-  animation:shine 8s linear infinite;
-}
-
-@keyframes shine{
-  0%{left:-40%;}
-  100%{left:140%;}
-}
-
-@media (max-width:900px){
-  .section-title{
-    font-size:24px;
-  }
-
-  .top-bar{
-    padding:14px 18px;
-  }
-
-  .section{
-    padding:30px 18px;
-  }
-}
-
-</style>
-
-<style id="deck-theme-upgrade">
-:root{
-  --light-bg:#f4f8fc;
-  --light-surface:#ffffff;
-  --light-card:#ffffff;
-  --light-border:#d8e2f0;
-  --light-text:#122033;
-  --light-muted:#5d6b82;
-}
-
-body.light-theme{
-  --nium-dark: var(--light-bg);
-  --nium-navy: #eef4fb;
-  --nium-card: var(--light-card);
-  --nium-border: var(--light-border);
-  --nium-text: var(--light-text);
-  --nium-muted: var(--light-muted);
-  background:
-    radial-gradient(circle at top left, rgba(0,194,168,0.12), transparent 30%),
-    linear-gradient(180deg,#f9fbfe 0%, #edf3fb 100%);
-}
-
-body.light-theme::before{
-  background-image:
-    linear-gradient(rgba(18,32,51,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(18,32,51,0.03) 1px, transparent 1px);
-}
-
-body.light-theme .sidebar,
-body.light-theme .top-bar{
-  background: rgba(255,255,255,0.82);
-  backdrop-filter: blur(20px);
-}
-
-body.light-theme .section-title{
-  background: linear-gradient(90deg,#122033,#00a896);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-
-body.light-theme .nav-table-wrap,
-body.light-theme .client-card,
-body.light-theme .scenario-card,
-body.light-theme .group-body,
-body.light-theme .params-table{
-  background: rgba(255,255,255,0.86);
-  box-shadow:
-    0 10px 28px rgba(31,45,61,0.08),
-    inset 0 1px 0 rgba(255,255,255,0.7);
-}
-
-body.light-theme .group-header{
-  background:
-    linear-gradient(90deg, rgba(0,194,168,0.08), transparent),
-    rgba(255,255,255,0.88);
-}
-
-body.light-theme .api-row:hover,
-body.light-theme .nav-table tbody tr:hover td{
-  background: rgba(0,194,168,0.08);
-}
-
-.theme-toggle{
-  position:fixed;
-  right:24px;
-  bottom:24px;
-  z-index:9999;
-  border:none;
-  border-radius:999px;
-  padding:14px 18px;
-  cursor:pointer;
-  font-family:'Sora',sans-serif;
-  font-weight:600;
-  font-size:13px;
-  background:linear-gradient(135deg,#00C2A8,#7B8FF0);
-  color:white;
-  box-shadow:0 10px 28px rgba(0,0,0,0.25);
-  transition:all .3s ease;
-}
-
-.theme-toggle:hover{
-  transform:translateY(-3px) scale(1.02);
-}
-
-.deck-hero{
-  margin: 10px 32px 0;
-  border-radius:28px;
-  overflow:hidden;
-  position:relative;
-  padding:42px;
-  background:
-    radial-gradient(circle at top right, rgba(255,255,255,0.18), transparent 30%),
-    linear-gradient(135deg,#00C2A8 0%, #0D1B35 50%, #7B8FF0 100%);
-  box-shadow:0 20px 60px rgba(0,0,0,0.22);
-}
-
-.deck-hero::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:
-    linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.08) 45%, transparent 60%);
-  animation:deckFlow 8s linear infinite;
-}
-
-@keyframes deckFlow{
-  0%{transform:translateX(-100%);}
-  100%{transform:translateX(100%);}
-}
-
-.hero-content{
-  position:relative;
-  z-index:2;
-  max-width:720px;
-}
-
-.hero-badge{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  background:rgba(255,255,255,0.12);
-  border:1px solid rgba(255,255,255,0.16);
-  padding:8px 14px;
-  border-radius:999px;
-  color:white;
-  font-size:12px;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  margin-bottom:18px;
-}
-
-.hero-title{
-  font-size:48px;
-  line-height:1.05;
-  color:white;
-  font-weight:700;
-  letter-spacing:-0.04em;
-  margin-bottom:14px;
-}
-
-.hero-desc{
-  color:rgba(255,255,255,0.86);
-  font-size:16px;
-  line-height:1.7;
-  max-width:640px;
-}
-
-.hero-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:14px;
-  margin-top:28px;
-}
-
-.hero-stat{
-  background:rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.12);
-  border-radius:18px;
-  padding:16px;
-  backdrop-filter:blur(10px);
-}
-
-.hero-stat strong{
-  display:block;
-  color:white;
-  font-size:24px;
-  margin-bottom:6px;
-}
-
-.hero-stat span{
-  color:rgba(255,255,255,0.72);
-  font-size:12px;
-}
-
-@media(max-width:900px){
-  .deck-hero{
-    margin:0 18px;
-    padding:28px 22px;
-  }
-
-  .hero-title{
-    font-size:34px;
-  }
-
-  .theme-toggle{
-    right:14px;
-    bottom:14px;
-  }
-}
-</style>
-
-
-<style id="executive-deck-theme">
-
-html{
-  scroll-behavior:smooth;
-}
-
-body{
-  background:
-    radial-gradient(circle at top left, rgba(0,194,168,0.14), transparent 26%),
-    radial-gradient(circle at bottom right, rgba(123,143,240,0.12), transparent 22%),
-    linear-gradient(180deg,#08101d 0%, #0d1626 100%);
-}
-
-body.light-theme{
-  background:
-    radial-gradient(circle at top left, rgba(0,194,168,0.10), transparent 30%),
-    linear-gradient(180deg,#f7fafe 0%, #eef4fb 100%);
+  flex:0 0 var(--sidebar-w) !important;
 }
 
 .main{
-  padding-bottom:60px;
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  width:100% !important;
+  max-width:100% !important;
+  overflow-x:hidden !important;
+  padding-bottom:20px;
 }
 
-.executive-deck{
-  position:relative;
-  margin:20px 28px 10px;
-  border-radius:34px;
-  overflow:hidden;
-  min-height:420px;
-  background:
-    linear-gradient(135deg,#07111d 0%, #10223d 40%, #0b3954 100%);
-  border:1px solid rgba(255,255,255,0.08);
-  box-shadow:
-    0 40px 80px rgba(0,0,0,0.28),
-    inset 0 1px 0 rgba(255,255,255,0.06);
+.top-bar,
+.portal-hero,
+.section,
+.doc-footer{
+  max-width:min(var(--content-max), calc(100vw - var(--sidebar-w) - 44px));
+  margin-left:auto !important;
+  margin-right:auto !important;
 }
 
-body.light-theme .executive-deck{
-  background:
-    linear-gradient(135deg,#ffffff 0%, #edf4fb 55%, #dfeef7 100%);
-  border:1px solid rgba(15,23,42,0.08);
+.top-bar{
+  width:calc(100% - 44px) !important;
 }
 
-.hero-overlay-grid{
-  position:absolute;
-  inset:0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-  background-size:40px 40px;
-  mask-image:linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0.2));
+.portal-hero,
+.section,
+.doc-footer{
+  width:calc(100% - 44px) !important;
 }
 
-body.light-theme .hero-overlay-grid{
-  background-image:
-    linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);
-}
-
-.hero-layout{
-  position:relative;
-  z-index:2;
-  display:grid;
-  grid-template-columns:1.2fr .8fr;
-  gap:20px;
-  align-items:center;
-  min-height:420px;
-  padding:48px;
-}
-
-.hero-chip{
-  display:inline-flex;
-  align-items:center;
-  padding:10px 16px;
-  border-radius:999px;
-  background:rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.08);
-  color:#d8e5f5;
-  font-size:11px;
-  font-weight:600;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  margin-bottom:24px;
-  backdrop-filter:blur(12px);
-}
-
-body.light-theme .hero-chip{
-  color:#17324d;
-  background:rgba(255,255,255,0.72);
-  border:1px solid rgba(15,23,42,0.06);
-}
-
-.hero-title{
-  font-size:72px;
-  line-height:.95;
-  letter-spacing:-0.06em;
-  color:white;
-  margin-bottom:24px;
-  font-weight:800;
-}
-
-.hero-title span{
-  background:linear-gradient(90deg,#00C2A8,#7B8FF0);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-
-body.light-theme .hero-title{
-  color:#07111d;
-}
-
-.hero-desc{
-  max-width:700px;
-  color:rgba(255,255,255,0.76);
-  font-size:17px;
-  line-height:1.8;
-}
-
-body.light-theme .hero-desc{
-  color:#4b6079;
-}
-
-.hero-actions{
-  display:flex;
-  gap:18px;
-  margin-top:34px;
-  flex-wrap:wrap;
-}
-
-.hero-mini-card{
-  width:240px;
-  padding:20px;
-  border-radius:24px;
-  background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.08);
-  backdrop-filter:blur(16px);
-  box-shadow:0 10px 30px rgba(0,0,0,0.18);
-}
-
-.hero-mini-card strong{
-  display:block;
-  color:white;
-  font-size:18px;
-  margin-bottom:8px;
-}
-
-.hero-mini-card span{
-  color:rgba(255,255,255,0.7);
-  font-size:13px;
-  line-height:1.6;
-}
-
-body.light-theme .hero-mini-card{
-  background:rgba(255,255,255,0.82);
-  border:1px solid rgba(15,23,42,0.06);
-}
-
-body.light-theme .hero-mini-card strong{
-  color:#07111d;
-}
-
-body.light-theme .hero-mini-card span{
-  color:#54657d;
-}
-
-.hero-right{
-  position:relative;
-  height:100%;
-  min-height:300px;
-}
-
-.floating-panel{
-  position:absolute;
-  width:220px;
-  border-radius:28px;
-  padding:26px;
-  backdrop-filter:blur(18px);
-  background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.08);
-  box-shadow:0 24px 40px rgba(0,0,0,0.24);
-  animation:floatCard 7s ease-in-out infinite;
-}
-
-body.light-theme .floating-panel{
-  background:rgba(255,255,255,0.82);
-  border:1px solid rgba(15,23,42,0.06);
-}
-
-.panel-1{top:20px;left:40px;}
-.panel-2{top:140px;right:10px;animation-delay:1.5s;}
-.panel-3{bottom:0;left:90px;animation-delay:3s;}
-
-.panel-label{
-  color:rgba(255,255,255,0.6);
-  font-size:12px;
-  margin-bottom:10px;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-
-.panel-value{
-  color:white;
-  font-size:30px;
-  font-weight:700;
-}
-
-body.light-theme .panel-label{
-  color:#607089;
-}
-
-body.light-theme .panel-value{
-  color:#07111d;
-}
-
-@keyframes floatCard{
-  0%,100%{transform:translateY(0px);}
-  50%{transform:translateY(-12px);}
-}
-
-.nav-table-wrap,
+.section,
+.portal-hero,
 .api-group,
 .client-card,
 .scenario-card,
-.params-table{
-  border-radius:24px !important;
-  overflow:hidden;
-  box-shadow:
-    0 18px 40px rgba(0,0,0,0.10),
-    inset 0 1px 0 rgba(255,255,255,0.03);
+.params-table,
+.nav-table-wrap{
+  min-width:0 !important;
 }
 
-.api-group{
-  border:none;
+.section-header,
+.portal-hero-content,
+.scenario-compare,
+.client-grid,
+.legend-row,
+.tab-bar{
+  min-width:0 !important;
+  max-width:100% !important;
 }
 
-.group-header{
-  min-height:68px;
+/* Universal wrapping rules for long API names, remarks, URLs, codes, and inline text */
+.section *,
+.api-row *,
+.nav-table *,
+.params-table *,
+.scenario-card *,
+.client-card *{
+  overflow-wrap:anywhere;
+  word-break:normal;
 }
 
-.api-row{
-  transition:all .25s ease;
+.url-code,
+.param-name,
+.param-type,
+.api-link,
+.module-link,
+.remark-link{
+  max-width:100%;
+  white-space:normal !important;
 }
 
-.api-row:hover{
-  transform:translateX(8px);
-}
-
-.section{
-  max-width:1600px;
-  margin:auto;
-}
-
-.section-title{
-  font-size:42px !important;
-}
-
-.theme-toggle{
-  width:64px;
-  height:64px;
-  border-radius:50%;
-  padding:0;
-  display:flex;
-  align-items:center;
+.pill,
+.type-tag,
+.legend-badge{
+  white-space:normal !important;
+  text-align:center;
   justify-content:center;
-  font-size:22px;
-  background:linear-gradient(135deg,#00C2A8,#7B8FF0);
-  border:none;
+}
+
+/* Table containment: scroll inside the card, never page-level overflow */
+.nav-table-wrap,
+.params-table-wrap,
+.table-wrap{
+  width:100% !important;
+  max-width:100% !important;
+  overflow-x:auto !important;
+  overflow-y:hidden;
+  overscroll-behavior-x:contain;
+  -webkit-overflow-scrolling:touch;
+}
+
+.nav-table-wrap::after{
+  content:"Scroll horizontally to view all client types →";
+  display:none;
+  padding:10px 8px 0;
+  font-size:11px;
+  color:var(--portal-muted);
+  text-align:right;
+}
+
+.nav-table{
+  width:100% !important;
+  min-width:980px !important;
+  max-width:none !important;
+  table-layout:fixed !important;
+}
+
+.nav-table th,
+.nav-table td{
+  min-width:0 !important;
+  max-width:260px;
+}
+
+.nav-table th.module-col,
+.nav-table tbody td:first-child{
+  width:220px !important;
+  min-width:220px !important;
+  max-width:220px !important;
+}
+
+.nav-table th.usecase-col,
+.nav-table thead th:not(.module-col),
+.nav-table tbody td:not(:first-child){
+  width:108px !important;
+  min-width:96px !important;
+  max-width:128px !important;
+}
+
+.nav-table thead th,
+.nav-table tbody td{
+  padding-left:10px !important;
+  padding-right:10px !important;
+}
+
+/* API grid: desktop fits within container; content wraps instead of expanding */
+.api-rows-header,
+.api-row{
+  width:100% !important;
+  max-width:100% !important;
+  grid-template-columns:52px minmax(170px,1.25fr) minmax(220px,2fr) minmax(96px,.62fr) minmax(150px,1fr) !important;
+}
+
+.api-row>div,
+.api-rows-header>div{
+  min-width:0 !important;
+}
+
+.api-desc,
+.api-remark{
+  display:block !important;
+}
+
+.api-name-cell{
+  min-width:0 !important;
+}
+
+/* Parameter tables also stay inside viewport */
+.params-table{
+  width:100% !important;
+  max-width:100% !important;
+  table-layout:fixed !important;
+}
+.params-table th,
+.params-table td{
+  min-width:0 !important;
+  overflow-wrap:anywhere;
+}
+
+/* Better readable cards without layout overflow */
+.client-grid{
+  grid-template-columns:repeat(auto-fit, minmax(min(260px, 100%), 1fr)) !important;
+}
+
+.scenario-compare{
+  grid-template-columns:repeat(2, minmax(0,1fr)) !important;
+}
+
+.scenario-row{
+  gap:18px;
+}
+.scenario-value{
+  max-width:62% !important;
+  overflow-wrap:anywhere;
+}
+
+/* Keep hero professional but not oversized on ordinary laptop widths */
+.portal-title{
+  font-size:clamp(42px, 5.2vw, 76px) !important;
+}
+.portal-hero-content{
+  grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr) !important;
+}
+
+/* Accessibility and smoother focus */
+a:focus-visible,
+button:focus-visible{
+  outline:3px solid rgba(0,194,168,.45);
+  outline-offset:3px;
+  border-radius:10px;
+}
+
+@media(max-width:1320px){
+  .api-rows-header,
+  .api-row{
+    grid-template-columns:48px minmax(155px,1.15fr) minmax(190px,1.75fr) minmax(92px,.6fr) minmax(130px,.95fr) !important;
+  }
+  .api-row>div{padding:14px 12px !important;}
+  .nav-table{min-width:930px !important;}
 }
 
 @media(max-width:1100px){
-
-  .hero-layout{
-    grid-template-columns:1fr;
-    padding:34px 26px;
+  .sidebar{display:none !important;}
+  .top-bar,
+  .portal-hero,
+  .section,
+  .doc-footer{
+    max-width:calc(100vw - 20px) !important;
+    width:calc(100% - 20px) !important;
   }
-
-  .hero-title{
-    font-size:54px;
+  .portal-hero-content{
+    grid-template-columns:1fr !important;
   }
-
-  .hero-right{
-    min-height:260px;
+  .scenario-compare{
+    grid-template-columns:1fr !important;
   }
-
-  .floating-panel{
-    width:180px;
+  .api-row{
+    grid-template-columns:1fr !important;
+    transform:none !important;
   }
+  .api-row:hover{transform:none !important;}
+  .api-row>div{
+    align-items:flex-start !important;
+    gap:12px;
+  }
+  .api-row>div::before{
+    flex:0 0 105px;
+  }
+  .nav-table-wrap::after{display:block;}
 }
 
-@media(max-width:768px){
-
-  .executive-deck{
-    margin:12px;
-    border-radius:24px;
-  }
-
-  .hero-title{
-    font-size:42px;
-  }
-
-  .hero-actions{
+@media(max-width:760px){
+  .top-bar{
+    position:relative !important;
+    top:auto !important;
     flex-direction:column;
+    align-items:flex-start !important;
+    gap:10px;
+    padding:14px 16px !important;
+    border-radius:18px !important;
   }
-
-  .hero-mini-card{
-    width:100%;
+  .portal-hero,
+  .section{
+    padding:24px 16px !important;
+    border-radius:22px !important;
   }
+  .portal-hero{min-height:auto !important;}
+  .portal-subtitle{font-size:14px !important;}
+  .section-title{font-size:28px !important;}
+  .section-desc{font-size:14px !important;}
+  .section::before{left:18px !important;width:130px !important;}
+  .legend-badge{width:100%;justify-content:flex-start;}
+  .tab-bar{width:100% !important;overflow-x:auto;}
+  .tab-btn{flex:0 0 auto;}
 
-  .floating-panel{
-    transform:scale(.85);
+  /* Mobile card view for the main navigator table */
+  .nav-table-wrap{
+    padding:0 !important;
+    border-radius:22px !important;
+    overflow:visible !important;
   }
+  .nav-table{
+    min-width:0 !important;
+    width:100% !important;
+    border-spacing:0 14px !important;
+  }
+  .nav-table thead{display:none !important;}
+  .nav-table tbody,
+  .nav-table tr,
+  .nav-table td{display:block !important;width:100% !important;max-width:100% !important;min-width:0 !important;}
+  .nav-table tbody tr{
+    border-radius:18px !important;
+    overflow:hidden;
+    border:1px solid var(--portal-border) !important;
+    background:var(--portal-card) !important;
+  }
+  .nav-table tbody td{
+    display:grid !important;
+    grid-template-columns:minmax(118px, 42%) minmax(0, 1fr);
+    gap:12px;
+    align-items:center;
+    text-align:right !important;
+    border-bottom:1px solid var(--portal-border) !important;
+    border-radius:0 !important;
+    padding:12px 14px !important;
+  }
+  .nav-table tbody td:first-child{
+    display:block !important;
+    text-align:left !important;
+    background:linear-gradient(90deg, rgba(0,194,168,.12), transparent) !important;
+  }
+  .nav-table tbody td:not(:first-child)::before{
+    content:attr(data-label);
+    text-align:left;
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--portal-muted);
+  }
+  .nav-table tbody td:last-child{border-bottom:none !important;}
+  .nav-table-wrap::after{display:none;}
 
-  .section-title{
-    font-size:32px !important;
+  .api-row>div{
+    display:grid !important;
+    grid-template-columns:105px minmax(0,1fr);
+  }
+  .api-row>div::before{
+    min-width:0 !important;
+    margin-right:0 !important;
+  }
+  .portal-theme-toggle{width:52px;height:52px;}
+  .doc-footer{flex-direction:column;gap:10px;align-items:flex-start !important;}
+}
+
+@media(max-width:420px){
+  .portal-title{font-size:36px !important;}
+  .portal-chip{font-size:10px;padding:8px 10px;}
+  .section-title{font-size:24px !important;}
+  .nav-table tbody td{
+    grid-template-columns:1fr;
+    text-align:left !important;
+  }
+  .api-row>div{
+    grid-template-columns:1fr !important;
   }
 }
 
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    scroll-behavior:auto !important;
+    transition-duration:.001ms !important;
+  }
+}
+</style>
+
+
+
+<style id="client-navigator-no-overlap-fix">
+/* =====================================================================
+   CLIENT TYPE NAVIGATOR — FINAL NO-OVERLAP TABLE FIX
+   Purpose: keep grouped table headers readable and keep every cell in a
+   disciplined column without page-level overflow at 100% zoom.
+===================================================================== */
+#main .nav-table-wrap{
+  width:100% !important;
+  max-width:100% !important;
+  overflow-x:auto !important;
+  overflow-y:hidden !important;
+  padding:12px !important;
+  border-radius:24px !important;
+  background:rgba(255,255,255,.54) !important;
+  isolation:isolate;
+}
+body.theme-dark #main .nav-table-wrap{background:rgba(255,255,255,.035) !important;}
+
+#main .nav-table{
+  width:100% !important;
+  min-width:1220px !important;
+  max-width:none !important;
+  table-layout:fixed !important;
+  border-collapse:separate !important;
+  border-spacing:0 10px !important;
+}
+
+#main .nav-table col.col-module{width:260px !important;}
+#main .nav-table col.col-client{width:137px !important;}
+
+#main .nav-table thead th{
+  box-sizing:border-box !important;
+  height:auto !important;
+  min-height:54px !important;
+  padding:14px 10px !important;
+  white-space:normal !important;
+  overflow-wrap:normal !important;
+  word-break:normal !important;
+  hyphens:none !important;
+  text-align:center !important;
+  vertical-align:middle !important;
+  line-height:1.32 !important;
+  font-size:10.5px !important;
+  letter-spacing:.06em !important;
+  color:#fff !important;
+  background:linear-gradient(135deg,#0d1b35,#173f6a) !important;
+  border-right:1px solid rgba(255,255,255,.16) !important;
+  border-bottom:1px solid rgba(255,255,255,.12) !important;
+  text-wrap:balance;
+}
+
+/* Do not let colspan group headers inherit a single-column width. */
+#main .nav-table thead tr:first-child th{
+  width:auto !important;
+  min-width:0 !important;
+  max-width:none !important;
+  font-size:10px !important;
+  letter-spacing:.08em !important;
+  text-transform:uppercase !important;
+}
+#main .nav-table thead tr:first-child th[colspan="2"]{width:274px !important;}
+#main .nav-table thead tr:first-child th[colspan="3"]{width:411px !important;}
+#main .nav-table thead tr:first-child th:not([colspan]):not(.module-col){width:137px !important;}
+
+#main .nav-table th.module-col,
+#main .nav-table tbody td:first-child{
+  width:260px !important;
+  min-width:260px !important;
+  max-width:260px !important;
+  text-align:left !important;
+}
+
+#main .nav-table th.usecase-col,
+#main .nav-table thead tr:nth-child(2) th,
+#main .nav-table tbody td:not(:first-child){
+  width:137px !important;
+  min-width:137px !important;
+  max-width:137px !important;
+}
+
+#main .nav-table tbody td{
+  padding:15px 10px !important;
+  white-space:normal !important;
+  overflow-wrap:break-word !important;
+  word-break:normal !important;
+  text-align:center !important;
+  vertical-align:middle !important;
+  line-height:1.35 !important;
+}
+
+#main .nav-table .module-link{
+  display:inline-block !important;
+  max-width:100% !important;
+  line-height:1.35 !important;
+  white-space:normal !important;
+}
+
+#main .nav-table .pill{
+  min-width:74px !important;
+  max-width:116px !important;
+  white-space:normal !important;
+  line-height:1.2 !important;
+  padding:5px 9px !important;
+  justify-content:center !important;
+  text-align:center !important;
+}
+
+#main .nav-table-wrap::after{
+  content:"Tip: scroll sideways inside this table to view all client types →" !important;
+  display:block !important;
+  padding:10px 4px 0 !important;
+  font-size:11px !important;
+  color:var(--portal-muted) !important;
+  text-align:right !important;
+}
+
+@media(max-width:1100px){
+  #main .nav-table{min-width:1120px !important;}
+  #main .nav-table col.col-module{width:240px !important;}
+  #main .nav-table col.col-client{width:126px !important;}
+  #main .nav-table th.module-col,
+  #main .nav-table tbody td:first-child{width:240px !important;min-width:240px !important;max-width:240px !important;}
+  #main .nav-table th.usecase-col,
+  #main .nav-table thead tr:nth-child(2) th,
+  #main .nav-table tbody td:not(:first-child){width:126px !important;min-width:126px !important;max-width:126px !important;}
+  #main .nav-table thead tr:first-child th[colspan="2"]{width:252px !important;}
+  #main .nav-table thead tr:first-child th[colspan="3"]{width:378px !important;}
+}
+
+@media(max-width:760px){
+  #main .nav-table-wrap{
+    overflow:visible !important;
+    padding:0 !important;
+    background:transparent !important;
+    border:none !important;
+    box-shadow:none !important;
+  }
+  #main .nav-table{
+    min-width:0 !important;
+    width:100% !important;
+    border-spacing:0 14px !important;
+  }
+  #main .nav-table colgroup{display:none !important;}
+  #main .nav-table thead{display:none !important;}
+  #main .nav-table tbody,
+  #main .nav-table tr,
+  #main .nav-table td{
+    display:block !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+  }
+  #main .nav-table tbody tr{
+    overflow:hidden !important;
+    border-radius:18px !important;
+    border:1px solid var(--portal-border) !important;
+    background:var(--portal-card) !important;
+  }
+  #main .nav-table tbody td{
+    display:grid !important;
+    grid-template-columns:minmax(132px,42%) minmax(0,1fr) !important;
+    gap:12px !important;
+    align-items:center !important;
+    padding:12px 14px !important;
+    border-bottom:1px solid var(--portal-border) !important;
+    text-align:right !important;
+  }
+  #main .nav-table tbody td:first-child{
+    display:block !important;
+    width:100% !important;
+    text-align:left !important;
+    background:linear-gradient(90deg, rgba(0,194,168,.12), transparent) !important;
+  }
+  #main .nav-table tbody td:not(:first-child)::before{
+    content:attr(data-label) !important;
+    text-align:left !important;
+    font-size:10px !important;
+    font-weight:900 !important;
+    letter-spacing:.06em !important;
+    text-transform:uppercase !important;
+    color:var(--portal-muted) !important;
+    line-height:1.35 !important;
+  }
+  #main .nav-table tbody td:last-child{border-bottom:none !important;}
+  #main .nav-table-wrap::after{display:none !important;}
+}
+</style>
+
+
+
+<style id="fixed-left-navigation-enhancement">
+/* =====================================================================
+   FIXED LEFT NAVIGATION ENHANCEMENT
+   Only app-shell behavior is adjusted. Main portal content is preserved.
+===================================================================== */
+html, body {
+  min-height: 100%;
+}
+
+body {
+  display: block !important;
+  overflow-x: hidden !important;
+}
+
+.sidebar {
+  position: fixed !important;
+  inset: 0 auto 0 0 !important;
+  width: var(--sidebar-w) !important;
+  min-width: var(--sidebar-w) !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  z-index: 999 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain;
+}
+
+.main {
+  width: calc(100% - var(--sidebar-w)) !important;
+  max-width: calc(100% - var(--sidebar-w)) !important;
+  margin-left: var(--sidebar-w) !important;
+  min-height: 100vh !important;
+  overflow: visible !important;
+}
+
+.top-bar {
+  position: sticky !important;
+  top: 14px !important;
+  z-index: 80 !important;
+}
+
+/* Prevent wide inner elements from pushing the fixed layout horizontally */
+.main,
+.section,
+.portal-hero,
+.doc-footer {
+  min-width: 0 !important;
+}
+
+/* Keep anchor jumps visible below the sticky top bar */
+[id] {
+  scroll-margin-top: 110px !important;
+}
+
+@media (max-width: 900px) {
+  body {
+    display: block !important;
+  }
+
+  .sidebar {
+    display: none !important;
+  }
+
+  .main {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+  }
+
+  .top-bar {
+    top: 8px !important;
+  }
+
+  [id] {
+    scroll-margin-top: 90px !important;
+  }
+}
 </style>
 
 </head>
@@ -1405,7 +1826,7 @@ body.light-theme .panel-value{
       <div class="logo-icon">N</div>
       <div class="logo-text">NIUM</div>
     </div>
-    <div class="logo-sub">API Navigator v0.2</div>
+    <div class="logo-sub">API Navigator V2.0</div>
   </div>
   <nav class="sidebar-nav">
     <div class="nav-label">Overview</div>
@@ -1455,59 +1876,17 @@ body.light-theme .panel-value{
 <!-- ─── MAIN CONTENT ─── -->
 <main class="main">
 
-<section class="deck-hero executive-deck">
-  <div class="hero-overlay-grid"></div>
-
-  <div class="hero-layout">
-    <div class="hero-left">
-      <div class="hero-chip">Enterprise Integration Reference</div>
-
-      <h1 class="hero-title">
-        NIUM API <span>Navigator</span>
-      </h1>
-
-      <p class="hero-desc">
-        Modern enterprise-grade integration architecture deck designed for solution engineers,
-        fintech onboarding teams, implementation managers, and API integration stakeholders.
-      </p>
-
-      <div class="hero-actions">
-        <div class="hero-mini-card">
-          <strong>V5 APIs</strong>
-          <span>Advanced onboarding & KYB orchestration</span>
-        </div>
-
-        <div class="hero-mini-card">
-          <strong>Interactive</strong>
-          <span>Presentation-ready navigation experience</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="hero-right">
-      <div class="floating-panel panel-1">
-        <div class="panel-label">Modules</div>
-        <div class="panel-value">12+</div>
-      </div>
-
-      <div class="floating-panel panel-2">
-        <div class="panel-label">Integration</div>
-        <div class="panel-value">Enterprise</div>
-      </div>
-
-      <div class="floating-panel panel-3">
-        <div class="panel-label">Status</div>
-        <div class="panel-value">Live Ready</div>
-      </div>
+<section class="portal-hero portal-reveal" aria-label="NIUM API Navigator document portal hero">
+  <div class="portal-hero-grid"></div>
+  <div class="portal-hero-content">
+    <div>
+      <div class="portal-chip">Enterprise Document Portal</div>
+      <h1 class="portal-title">NIUM API <span>Navigator</span></h1>
+      <p class="portal-subtitle">A polished, presentation-ready integration checklist designed like an executive document deck, with structured API flows, clear module hierarchy, aligned tables, and interactive navigation.</p>
     </div>
   </div>
 </section>
 
-
-  <div class="top-bar">
-    <div class="breadcrumb">NIUM <span>›</span> <span>API Integration Checklist</span></div>
-    <span class="version-badge">v0.2 DRAFT</span>
-  </div>
 
   <!-- ═══════════════════════════════════════════════
        SECTION 1 – MAIN NAVIGATOR
@@ -1533,6 +1912,16 @@ body.light-theme .panel-value{
     <!-- Navigator Table -->
     <div class="nav-table-wrap">
       <table class="nav-table">
+        <colgroup>
+          <col class="col-module">
+          <col class="col-client">
+          <col class="col-client">
+          <col class="col-client">
+          <col class="col-client">
+          <col class="col-client">
+          <col class="col-client">
+          <col class="col-client">
+        </colgroup>
         <thead>
           <tr>
             <th class="module-col">API Module</th>
@@ -1757,7 +2146,7 @@ body.light-theme .panel-value{
             <div class="api-row">
               <div class="api-num">1</div>
               <div class="api-name-cell">
-                <a class="api-link" href="https://docs.nium.com/api" target="_blank">Public Corporate Details using Business ID</a>
+                <a class="api-link" href="https://docs.nium.com/api#tag/customer-onboarding-v5/GET/api/v5/client/{clientHashId}/corporate/publicDetails" target="_blank">Public Corporate Details using Business ID</a>
                 <span class="type-tag type-api">API</span>
               </div>
               <div class="api-desc">Fetch publicly available corporate details using a Business ID.</div>
@@ -1767,7 +2156,7 @@ body.light-theme .panel-value{
             <div class="api-row">
               <div class="api-num">2</div>
               <div class="api-name-cell">
-                <a class="api-link" href="https://docs.nium.com/api" target="_blank">Exhaustive Corporate Details using Business ID</a>
+                <a class="api-link" href="https://docs.nium.com/api#tag/customer-onboarding-v5/GET/api/v5/client/{clientHashId}/corporate/exhaustiveDetailsSearch" target="_blank">Exhaustive Corporate Details using Business ID</a>
                 <span class="type-tag type-api">API</span>
               </div>
               <div class="api-desc">Fetch exhaustive corporate details available for SG and EU/UK regions.</div>
@@ -1787,7 +2176,7 @@ body.light-theme .panel-value{
             <div class="api-row">
               <div class="api-num">4</div>
               <div class="api-name-cell">
-                <a class="api-link" href="https://docs.nium.com/api" target="_blank">Update Customer v5</a>
+                <a class="api-link" href="https://docs.nium.com/api#tag/customer-onboarding-v5/PUT/api/v5/client/{clientHashId}/customer/{customerHashId}" target="_blank">Update Customer v5</a>
                 <span class="type-tag type-api">API</span>
               </div>
               <div class="api-desc">Upload additional documents when the initial set exceeds 10 MB.</div>
@@ -1797,7 +2186,7 @@ body.light-theme .panel-value{
             <div class="api-row">
               <div class="api-num">5</div>
               <div class="api-name-cell">
-                <a class="api-link" href="https://docs.nium.com/api" target="_blank">Submit KYC for Customer</a>
+                <a class="api-link" href="https://docs.nium.com/api#tag/customer-onboarding-v5/POST/api/v5/client/{clientHashId}/customer/{customerHashId}/submitKyc" target="_blank">Submit KYC for Customer</a>
                 <span class="type-tag type-api">API</span>
               </div>
               <div class="api-desc">Submit KYC for a customer entity after documents are uploaded.</div>
@@ -1848,17 +2237,7 @@ body.light-theme .panel-value{
               <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
               <div class="api-remark">RFI use case — Corporate customer.</div>
             </div>
-            <div class="api-row">
-              <div class="api-num">9</div>
-              <div class="api-name-cell">
-                <a class="api-link" href="https://docs.nium.com/apis/reference/regeneratekycurl" target="_blank">Regenerate KYC URL</a>
-                <span class="type-tag type-api">API</span>
-              </div>
-              <div class="api-desc">Regenerate the applicant's eKYC URL for SG and EU/UK regions.</div>
-              <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
-              <div class="api-remark">Read the description carefully — region specific.</div>
-            </div>
-          </div>
+
         </div>
 
         <!-- Group 3: T&C -->
@@ -1908,14 +2287,14 @@ body.light-theme .panel-value{
             </div>
             <div class="api-row">
               <div class="api-num">1</div>
-              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Customer List V5</a><span class="type-tag type-api">API</span></div>
+              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api#tag/customer-onboarding-v5/GET/api/v5/client/{clientHashId}/customers" target="_blank">Customer List V5</a><span class="type-tag type-api">API</span></div>
               <div class="api-desc">Get the list of all customers onboarded to NIUM.</div>
               <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
               <div class="api-remark">Use as needed by your use case.</div>
             </div>
             <div class="api-row">
               <div class="api-num">2</div>
-              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Customer Details V5</a><span class="type-tag type-api">API</span></div>
+              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api#tag/customer-onboarding-v5/GET/api/v5/client/{clientHashId}/customer/{customerHashId}" target="_blank">Customer Details V5</a><span class="type-tag type-api">API</span></div>
               <div class="api-desc">Fetch details of a specific customer by <span class="url-code">customerHashId</span>.</div>
               <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
               <div class="api-remark">Use as needed.</div>
@@ -1943,14 +2322,14 @@ body.light-theme .panel-value{
             </div>
             <div class="api-row">
               <div class="api-num">6</div>
-              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/updatecorporatecustomerusingpost" target="_blank">Update Corporate Customer</a><span class="type-tag type-api">API</span></div>
+              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api#tag/customer-onboarding-v5/PUT/api/v5/client/{clientHashId}/customer/{customerHashId}" target="_blank">Update Corporate Customer</a><span class="type-tag type-api">API</span></div>
               <div class="api-desc">Update corporate KYB data (business details, stakeholders, applicant details).</div>
               <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
               <div class="api-remark">Use when business or stakeholder info changes for an existing customer.</div>
             </div>
             <div class="api-row">
               <div class="api-num">7</div>
-              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/customerupdate" target="_blank">Customer Update</a><span class="type-tag type-api">API</span></div>
+              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api#tag/customer-onboarding-v5/PUT/api/v5/client/{clientHashId}/customer/{customerHashId}" target="_blank">Customer Update</a><span class="type-tag type-api">API</span></div>
               <div class="api-desc">Update non-KYC employee information.</div>
               <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
               <div class="api-remark"></div>
@@ -1992,7 +2371,7 @@ body.light-theme .panel-value{
             </div>
             <div class="api-row">
               <div class="api-num">3</div>
-              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/apis/reference/transactions-1" target="_blank">Transactions</a><span class="type-tag type-api">API</span></div>
+              <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api#tag/customer-wallet-transactions/GET/api/v1/client/{clientHashId}/customer/{customerHashId}/wallet/{walletHashId}/transactions" target="_blank">Transactions</a><span class="type-tag type-api">API</span></div>
               <div class="api-desc">Fetch corporate wallet transactions.</div>
               <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
               <div class="api-remark"></div>
@@ -2335,9 +2714,8 @@ body.light-theme .panel-value{
         <div class="api-row">
           <div class="api-num">1</div>
           <div class="api-name-cell">
-            <a class="api-link" href="https://docs.nium.com/api" target="_blank">Fetch Supported Corridors v3</a>
+            <a class="api-link" href="https://docs.nium.com/api#tag/payout/GET/api/v3/client/{clientHashId}/supportedCorridors" target="_blank">Fetch Supported Corridors v3</a>
             <span class="type-tag type-api">API</span>
-            <span class="url-code" style="margin-top:2px">GET /api/v3/client/{'{'}clientHashId{'}'}/customer/{'{'}customerHashId{'}'}/supportedCorridors</span>
           </div>
           <div class="api-desc">Retrieve supported destination currencies and countries for payouts.</div>
           <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
@@ -2348,7 +2726,7 @@ body.light-theme .panel-value{
           <div class="api-name-cell">
             <a class="api-link" href="https://docs.nium.com/apis/reference/beneficiaryvalidationschemav2" target="_blank">Beneficiary Validation Schema v2</a>
             <span class="type-tag type-api">API</span>
-            <span class="url-code" style="margin-top:2px">GET /api/v1/client/{'{'}clientHashId{'}'}/customer/{'{'}customerHashId{'}'}/beneficiaryValidationSchema</span>
+           
           </div>
           <div class="api-desc">Retrieve required beneficiary and payout details based on the selected payout method.</div>
           <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
@@ -2359,7 +2737,7 @@ body.light-theme .panel-value{
           <div class="api-name-cell">
             <a class="api-link" href="https://docs.nium.com/apis/reference/searchroutingcodeusingbankname" target="_blank">Search Routing Code (using bank name)</a>
             <span class="type-tag type-api">API</span>
-            <span class="url-code" style="margin-top:2px">GET /api/v1/client/{'{'}clientHashId{'}'}/transfercodes</span>
+
           </div>
           <div class="api-desc">Fetch routing code details using a bank name for use in <span class="url-code">beneficiary.payoutDetails</span>.</div>
           <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
@@ -2370,7 +2748,7 @@ body.light-theme .panel-value{
           <div class="api-name-cell">
             <a class="api-link" href="https://docs.nium.com/apis/reference/searchroutingcodeusingbanknamebranchname" target="_blank">Search Routing Code (using branch name)</a>
             <span class="type-tag type-api">API</span>
-            <span class="url-code" style="margin-top:2px">GET /api/v1/client/{'{'}clientHashId{'}'}/transfercodes</span>
+            
           </div>
           <div class="api-desc">Fetch routing code details using a branch name for use in <span class="url-code">beneficiary.payoutDetails</span>.</div>
           <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
@@ -2381,7 +2759,6 @@ body.light-theme .panel-value{
           <div class="api-name-cell">
             <a class="api-link" href="https://docs.nium.com/apis/reference/fetchbankdetailsusingroutingcode" target="_blank">Fetch Bank Details using Routing Code</a>
             <span class="type-tag type-api">API</span>
-            <span class="url-code" style="margin-top:2px">GET /api/v1/client/{'{'}clientHashId{'}'}/transfercodes</span>
           </div>
           <div class="api-desc">Retrieve bank details based on a routing code for use in <span class="url-code">beneficiary.payoutDetails</span>.</div>
           <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
@@ -2404,7 +2781,6 @@ body.light-theme .panel-value{
           <div class="api-name-cell">
             <a class="api-link" href="https://docs.nium.com/apis/reference/exchangeratelockandhold" target="_blank">Fetch and Lock Exchange Rate</a>
             <span class="type-tag type-api">API</span>
-            <span class="url-code" style="margin-top:2px">GET /api/v1/…/lockExchangeRate</span>
           </div>
           <div class="api-desc">Retrieve and lock an exchange rate. Returns an <span class="url-code">Audit_ID</span> required for Transfer Money in cross-currency transactions.</div>
           <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
@@ -2413,9 +2789,8 @@ body.light-theme .panel-value{
         <div class="api-row">
           <div class="api-num">2</div>
           <div class="api-name-cell">
-            <a class="api-link" href="https://docs.nium.com/api" target="_blank">Fetch Purpose Code</a>
+            <a class="api-link" href="https://docs.nium.com/api#tag/payout/GET/api/v1/remittance/purposeCodes" target="_blank">Fetch Purpose Code</a>
             <span class="type-tag type-api">API</span>
-            <span class="url-code" style="margin-top:2px">GET /api/v1/remittance/purposeCodes</span>
           </div>
           <div class="api-desc">Retrieve purpose codes required for the Transfer Money request body.</div>
           <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
@@ -2426,7 +2801,6 @@ body.light-theme .panel-value{
           <div class="api-name-cell">
             <a class="api-link" href="https://docs.nium.com/apis/reference/transfermoney" target="_blank">Transfer Money</a>
             <span class="type-tag type-api">API</span>
-            <span class="url-code" style="margin-top:2px">POST /api/v1/…/remittance</span>
           </div>
           <div class="api-desc">Initiates a transfer from your customer (remitter) to the beneficiary.</div>
           <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
@@ -2437,7 +2811,6 @@ body.light-theme .panel-value{
           <div class="api-name-cell">
             <a class="api-link" href="https://docs.nium.com/apis/reference/fetchremittancelifecyclestatus" target="_blank">Fetch Remittance Life Cycle Status</a>
             <span class="type-tag type-api">API</span>
-            <span class="url-code" style="margin-top:2px">GET /api/v1/…/remittance/{'{'}systemReferenceNumber{'}'}/audit</span>
           </div>
           <div class="api-desc">Retrieve the full lifecycle status of a remittance transaction.</div>
           <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
@@ -2460,7 +2833,7 @@ body.light-theme .panel-value{
           <div class="api-name-cell">
             <a class="api-link" href="https://docs.nium.com/docs/reference/callback-to-receive-transaction-compliance-status" target="_blank">Transaction Compliance Status</a>
             <span class="type-tag type-callback">Callback</span>
-            <span class="url-code" style="margin-top:2px">POST /callback [compliance status callback]</span>
+       
           </div>
           <div class="api-desc">Triggered when there's a screening hit — updates status to <span class="url-code">RFI_REQUESTED</span> and sends a compliance callback to your endpoint.</div>
           <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
@@ -2471,7 +2844,7 @@ body.light-theme .panel-value{
           <div class="api-name-cell">
             <a class="api-link" href="https://docs.nium.com/apis/reference/transactions" target="_blank">Transactions</a>
             <span class="type-tag type-api">API</span>
-            <span class="url-code" style="margin-top:2px">GET /api/v1/…/transactions</span>
+
           </div>
           <div class="api-desc">Fetch transaction details upon receiving the compliance callback. If status is <span class="url-code">RFI_REQUESTED</span>, refer to <span class="url-code">RFIDETAILS</span> in the response.</div>
           <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
@@ -2482,7 +2855,7 @@ body.light-theme .panel-value{
           <div class="api-name-cell">
             <a class="api-link" href="https://docs.nium.com/apis/reference/respondtotransactionrfi" target="_blank">Response to Transaction RFI</a>
             <span class="type-tag type-api">API</span>
-            <span class="url-code" style="margin-top:2px">POST /api/v1/…/remittance/{'{'}systemReferenceNumber{'}'}/rfi</span>
+
           </div>
           <div class="api-desc">Submit your response to RFIs for transactions under compliance review.</div>
           <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
@@ -2570,7 +2943,7 @@ body.light-theme .panel-value{
         </div>
         <div class="api-row">
           <div class="api-num">2</div>
-          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Activate Card V2</a><span class="type-tag type-api">API</span></div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api#tag/lifecycle/POST/api/v2/client/{clientHashId}/customer/{customerHashId}/wallet/{walletHashId}/card/{cardHashId}/activate" target="_blank">Activate Card V2</a><span class="type-tag type-api">API</span></div>
           <div class="api-desc">Activate a physical card using the 8-digit numeric Activation Code from the envelope or printed on card.</div>
           <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
           <div class="api-remark">Required for Physical Card issuance.</div>
@@ -2598,21 +2971,21 @@ body.light-theme .panel-value{
         </div>
         <div class="api-row">
           <div class="api-num">6</div>
-          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Get Card Details Widget</a><span class="type-tag type-api">API</span></div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api#tag/lifecycle/POST/api/v1/client/{clientHashId}/customer/{customerHashId}/wallet/{walletHashId}/card/{cardHashId}/widget/showCardDetails" target="_blank">Get Card Details Widget</a><span class="type-tag type-api">API</span></div>
           <div class="api-desc">Fetch card details via a PCI-safe widget.</div>
           <div class="api-req-cell"><span class="pill pill-optional">Optional</span></div>
           <div class="api-remark">For non-PCI DSS environments. Alternatively use Show Security Details Encrypted.</div>
         </div>
         <div class="api-row">
           <div class="api-num">7</div>
-          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Block and Replace Card</a><span class="type-tag type-api">API</span></div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api#tag/lifecycle/POST/api/v2/client/{clientHashId}/customer/{customerHashId}/wallet/{walletHashId}/card/{cardHashId}/blockAndReplace" target="_blank">Block and Replace Card</a><span class="type-tag type-api">API</span></div>
           <div class="api-desc">Block a card — optionally replace with a new card at the same time.</div>
           <div class="api-req-cell"><span class="pill pill-yes">YES</span></div>
           <div class="api-remark"></div>
         </div>
         <div class="api-row">
           <div class="api-num">8</div>
-          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api" target="_blank">Convert Card</a><span class="type-tag type-api">API</span></div>
+          <div class="api-name-cell"><a class="api-link" href="https://docs.nium.com/api#tag/lifecycle/POST/api/v1/client/{clientHashId}/customer/{customerHashId}/wallet/{walletHashId}/card/{cardHashId}/convert" target="_blank">Convert Card</a><span class="type-tag type-api">API</span></div>
           <div class="api-desc">Convert a virtual card to a physical card.</div>
           <div class="api-req-cell"><span class="pill pill-cond">Conditional</span></div>
           <div class="api-remark">Required for Physical Card issuance.</div>
@@ -2971,7 +3344,7 @@ body.light-theme .panel-value{
 
   <!-- Footer -->
   <div class="doc-footer">
-    <span>NIUM API Navigator — v0.2 Draft</span>
+    <span>NIUM API Navigator — V2.0 </span>
     <span>All hyperlinks preserved from source. <a href="https://docs.nium.com" target="_blank" style="color:var(--nium-teal)">docs.nium.com ↗</a></span>
   </div>
 </main>
@@ -3017,97 +3390,98 @@ body.light-theme .panel-value{
   sections.forEach(s => observer.observe(s));
 </script>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
+<script id="premium-document-portal-js">
+(function(){
+  const body = document.body;
+  const savedTheme = localStorage.getItem('niumPortalTheme') || 'light';
+  if(savedTheme === 'dark') body.classList.add('theme-dark');
 
-  // Add reveal animation classes
-  document.querySelectorAll('.section, .api-group, .scenario-card, .client-card')
-    .forEach(el => el.classList.add('fade-in-section'));
+  const progress = document.createElement('div');
+  progress.className = 'portal-progress';
+  document.body.appendChild(progress);
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if(entry.isIntersecting){
-        entry.target.classList.add('visible');
-      }
-    });
-  }, { threshold: 0.08 });
+  const toggle = document.createElement('button');
+  toggle.className = 'portal-theme-toggle';
+  toggle.type = 'button';
+  toggle.setAttribute('aria-label','Toggle light and dark theme');
+  toggle.innerHTML = body.classList.contains('theme-dark') ? '☀️' : '🌙';
+  document.body.appendChild(toggle);
 
-  document.querySelectorAll('.fade-in-section').forEach(el => observer.observe(el));
-
-  // Add glass highlight effect
-  document.querySelectorAll('.scenario-card, .client-card').forEach(el => {
-    el.classList.add('glass-highlight');
+  toggle.addEventListener('click', function(){
+    body.classList.toggle('theme-dark');
+    const dark = body.classList.contains('theme-dark');
+    localStorage.setItem('niumPortalTheme', dark ? 'dark' : 'light');
+    toggle.innerHTML = dark ? '☀️' : '🌙';
   });
 
-  // Sidebar active state on scroll
+  document.querySelectorAll('.api-row').forEach(function(row){
+    const labels = ['#','API / Webhook','Description','Required','Notes'];
+    Array.from(row.children).forEach(function(cell, index){
+      cell.setAttribute('data-label', labels[index] || 'Detail');
+    });
+  });
+
+  const revealItems = document.querySelectorAll('.section,.api-group,.client-card,.scenario-card,.portal-hero');
+  revealItems.forEach(function(el){ el.classList.add('portal-reveal'); });
+  const io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting) entry.target.classList.add('is-visible');
+    });
+  }, {threshold:.08});
+  revealItems.forEach(function(el){ io.observe(el); });
+
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-item[href^="#"]');
+  function updateScrollState(){
+    const doc = document.documentElement;
+    const max = doc.scrollHeight - window.innerHeight;
+    progress.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
 
-  const activateNav = () => {
     let current = '';
-    sections.forEach(section => {
-      const top = section.offsetTop - 120;
-      if(scrollY >= top){
-        current = section.getAttribute('id');
-      }
+    sections.forEach(function(section){
+      if(window.scrollY >= section.offsetTop - 160){ current = section.id; }
     });
-
-    navLinks.forEach(link => {
-      link.classList.remove('active');
-      if(link.getAttribute('href') === '#' + current){
-        link.classList.add('active');
-      }
+    navLinks.forEach(function(link){
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current);
     });
-  };
+  }
+  window.addEventListener('scroll', updateScrollState, {passive:true});
+  updateScrollState();
+})();
+</script>
 
-  window.addEventListener('scroll', activateNav);
-  activateNav();
 
-  // Smooth scrolling
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e){
-      const target = document.querySelector(this.getAttribute('href'));
-      if(target){
-        e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+
+<script id="flawless-responsive-alignment-js">
+(function(){
+  const navigatorLabels = [
+    'API Module',
+    'Bank / FI — Payout',
+    'Bank / FI — Collection',
+    'Non-Bank FI — Payout',
+    'NonFI Direct — Payout',
+    'Platform — Payout',
+    'Platform — Spend Mgmt',
+    'Platform — Full Stack'
+  ];
+  document.querySelectorAll('.nav-table tbody tr').forEach(function(row){
+    Array.from(row.children).forEach(function(cell, index){
+      cell.setAttribute('data-label', navigatorLabels[index] || 'Detail');
     });
   });
 
-});
+  // Ensure any future generic table is safely wrapped without changing data.
+  document.querySelectorAll('table').forEach(function(table){
+    if(table.closest('.nav-table-wrap') || table.closest('.table-wrap')) return;
+    if(table.classList.contains('params-table')){
+      const wrapper = document.createElement('div');
+      wrapper.className = 'table-wrap params-table-wrap';
+      table.parentNode.insertBefore(wrapper, table);
+      wrapper.appendChild(table);
+    }
+  });
+})();
 </script>
-
-
-
-<script>
-const themeBtn = document.createElement('button');
-themeBtn.className = 'theme-toggle';
-themeBtn.innerHTML = '🌙';
-
-document.body.classList.add('light-theme');
-
-themeBtn.addEventListener('click', () => {
-  document.body.classList.toggle('light-theme');
-
-  if(document.body.classList.contains('light-theme')){
-    themeBtn.innerHTML = '🌙';
-    localStorage.setItem('deck-theme', 'light');
-  } else {
-    themeBtn.innerHTML = '☀️';
-    localStorage.setItem('deck-theme', 'dark');
-  }
-});
-
-const savedTheme = localStorage.getItem('deck-theme');
-
-if(savedTheme === 'dark'){
-  document.body.classList.remove('light-theme');
-  themeBtn.innerHTML = '☀️';
-}
-
-document.body.appendChild(themeBtn);
-</script>
-
 
 </body>
 </html>
